@@ -5,15 +5,29 @@ import Filter from './components/Sidebar';
 import './App.css';
 import invisibilitylogo from "./InvisibilityLogo.png";
 
+//import data from "./data.json";
+
 
 class App extends Component {
   constructor(props){
     super();
-
+    
     this.state={
       entries: [],
       isLoaded:false
     }
+  }
+
+  callAPI(){
+    fetch("http://localhost:2000/show")
+    .then(response => response.json())
+    .then(response => {
+      this.setState({
+        isLoaded: true,
+        entries: response
+      });
+    })
+    .catch(err => {console.log(err)});
   }
 
   componentDidMount() {
@@ -24,9 +38,40 @@ class App extends Component {
     //replace localhost:2000 url with the URL where your php endpoint will live (e.g. http://robertglick.com/getData.php)
     // if the domain name is different from where you're hosting this app, you'll need to replace the localhost:3000 address with the domain where this app lives
     // if they're on the same domain you should be able to omit the Access-Control bits and the line in the PHP
-    fetch("http://localhost:8888/getData.php", { 'Access-Control-Allow-Origin': 'http://localhost:3000',
+    this.callAPI();
+    /*
+    this.setState({
+      isLoaded: true,
+      entries: data
+    });
+    console.log(data);
+    */
+
+    // read all entities
+    /*
+    const [associations, setAssociations] = React.useState(null);
+    fetch("http://localhost:2000/show", { 'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Credentials':'true'})
-      .then(res => res.json())
+    .then(response => console.log("Hello it's me ROSCOE"+Object.keys(response.json())))
+    .then(response => response.json())
+    .catch(err => {console.log(err)});
+    //.then(body => setAssociations(body));
+    
+    /*
+    .then(response => {
+      this.setState({
+        isLoaded: true,
+        entries: response
+      });
+    })
+    .catch(err => { console.log(err); 
+    });
+    */
+
+    /*
+    fetch("./data.json", { 'Access-Control-Allow-Origin': 'http://localhost:3000',
+    'Access-Control-Allow-Credentials':'true'})
+      .then(result => result.json())
       .then(
         (result) => {
           this.setState({
@@ -40,8 +85,10 @@ class App extends Component {
             isLoaded: true,
             error
           });
+          console.log("There was an error loading the data");
         }
       )
+      */
   }
 
   // you could write a function to randomize the this.state.entries array then store it in state for random card order, like in the original
@@ -55,8 +102,7 @@ class App extends Component {
         <header>
           <img src ={invisibilitylogo} height="120px" id = "logo" alt="logo" />
           <p id ="instruct">Click on the tiles to reveal METATEXT</p>
-        
-        
+
             <div className="invisibleDot">
                 <button id="invisibleButton">[               .               ]</button>
             </div>

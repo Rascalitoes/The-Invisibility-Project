@@ -20,8 +20,8 @@ export default class Card extends Component {
         :
           // <div className= "entry tile2" id="meta10">
         <div>
-            <p className={'author', 'text'}> {this.props.author}</p>
-            <p className={'sourceInfo', 'text'}>  {this.props.source} </p>
+            <p className={'author text'}> {this.props.author}</p>
+            <p className={'sourceInfo text'}>  {this.props.source} </p>
         </div>   
           // </div>
         }
