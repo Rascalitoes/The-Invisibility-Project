@@ -61,10 +61,16 @@ function initialize() {
             //cors() allows us to verify requests between frontent and backend
             app.use(cors());
 
-            //retrieves all data from the database
+            //retrieves ALL data from the database
             app.get('/show', function (req, res, next) {
                 console.log("in GET");
-                handleShow(res, invisCollection);
+                handleShowRand(res, invisCollection);
+            });
+
+            app.get('', function (req, res, next) {
+                console.log("in GET qty");
+                const parsedURL = url.parse(req.url,true);
+                handleShow(res, invisCollection, parsedURL.query.qty);
             });
 
             //Work in progress
@@ -91,9 +97,8 @@ function initialize() {
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
  */
 
-function handleShow(res, collection) {
-    //returns all of the data in the collection, as denoted by the empty curly braces
-    collection.find({}, { projection: { _id: 0 } }).toArray()
+function handleShow(res, collection, quantity = "") {
+collection.find({}, { projection: { _id: 0 }}).toArray()
         .then(results => {
             //set the header and status
             res.setHeader('content-type', 'Application/json');
@@ -103,6 +108,23 @@ function handleShow(res, collection) {
         })
         .catch(error => console.error(error))
 }
+
+//$sample returns a random sample of documents back. If all documents are unique,
+//then there will be no repeats.
+function handleShowRand(res, collection, quantity = "") {
+    collection.aggregate([{$sample: {size: 5}}]).toArray()
+        .then(results => {
+            //set the header and status
+            res.setHeader('content-type', 'Application/json');
+            res.statusCode = 200;
+            //send the JSON data to be displayed and read by the frontend
+            res.send(JSON.stringify(results));
+        })
+        .catch(error => console.error(error))
+}
+
+
+
 
 function handleCreate(author, source, quote, res, collection) {
     //call geolocation api and get the details
