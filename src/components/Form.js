@@ -43,7 +43,7 @@ export default class Form extends Component {
   render() {
 
     return (
-      <div>
+      <div id="midline">
         <p id="formHeader">Enter a new (In)Visibility:</p>
         <form onSubmit={this.handleSubmit} target="_blank">
 

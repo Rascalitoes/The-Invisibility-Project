@@ -18,7 +18,7 @@ export default class Filter extends Component {
   render() {
     return (
 
-      <div>
+      <div id="sidebar">
 
         <Row> <Col>
           <form>

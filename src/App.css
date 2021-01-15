@@ -100,7 +100,17 @@
     border-color: #212121;
     font-family: Corals;
     margin-right: 3vmax;
+}
 
+#midline{
+  padding-bottom: 20px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: #212121;
+}
+
+#sidebar{
+  padding-top: 7px;
 }
 
 #filterHead{
