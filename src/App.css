@@ -24,14 +24,14 @@
 }
 
 .tile{
-  width: 15vw;
-  height: 15vw;
+  height: 200px;
+  width: 200px;
   float: left;
   margin: 1vw 2vw 1vw 2vw;
   border-style: solid;
   border-width: 1px; 
   border-color: #212121; 
-overflow-x:hidden;
+  overflow-x:hidden;
   text-align: left;
   font-size: 14px; 
   resize: vertical;
@@ -43,9 +43,12 @@ overflow-x:hidden;
 
 
 .newEntryForm{
-    margin:10px;
+    width:100%;
 }
 
+.textInput{
+  width:100%;
+}
 
 
 .meta{
@@ -77,10 +80,14 @@ overflow-x:hidden;
 }
 
 .container{
-    width: 60vw; 
-    height: 40vw;
-    float: left;
-    background: white;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+#cards{
+  align-content: space-around;
 }
 
 #formHeader{
@@ -88,18 +95,12 @@ overflow-x:hidden;
 }
 
 #filters{
-    float: left;
-    width: 30vw;
-    height: 80vw;
-    margin-left: 1vw;
     border-style: solid;
     border-width: 1px;
     border-color: #212121;
     font-family: Corals;
-    margin-top: 1vw;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
+    margin-right: 3vmax;
+
 }
 
 #filterHead{
@@ -158,8 +159,9 @@ overflow-x:hidden;
 
 }
 
-.author {
+#author {
     visibility: visible;
+    width: 100%;
 }
 
 .sourceInfo {

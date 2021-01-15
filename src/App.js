@@ -4,6 +4,10 @@ import Form from './components/Form';
 import Filter from './components/Sidebar';
 import './App.css';
 import invisibilitylogo from "./InvisibilityLogo.png";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 //import data from "./data.json";
 
@@ -19,12 +23,12 @@ class App extends Component {
   }
 
   //callAPI only fetches (GET) data, it can't POST or PUT
-  callAPI(quantity="/show") {
+  callAPI(quantity = "/show") {
     //replace localhost:2000 url with the URL where your database will live (e.g. http://robertglick.com/database/show)
     //Alternatively, you can go to package.json, and set "proxy":"http://robertglick.com", and fetch("/show")
     //You could write a function to randomize the this.state.entries array then store it in state for random card order, like in the original
-    if(quantity !== "/show"){
-      quantity = "?qty="+quantity;
+    if (quantity !== "/show") {
+      quantity = "?qty=" + quantity;
     }
     fetch(`http://localhost:2000${quantity}`)
       .then(response => response.json())
@@ -46,7 +50,7 @@ class App extends Component {
      * I don't need any special headers about access restrictions because I added the CORS library.
      * To learn more about how this all works, please see src/server.js
      */
-    this.callAPI();
+    this.callAPI(12);
   }
 
   render() {
@@ -67,33 +71,36 @@ class App extends Component {
         </header>
 
 
+        {/*<Container fluid>*/}
+          <Row>
+            {/* A react quirk requires 'className' rather than 'class' like you'd find in HTML */}
+            <Col xs = {8} id = "cards" className="container">
+              {this.state.entries ?
+                //if true (entries exist in state), then map through the array of entries one by one and make a new Card element for each
+                this.state.entries.map((entry, index) => {
+                  return <Card key={index} quote={entry.Quote} author={entry.Author} source={entry.Text_source} />
+                })
+                :
+                //else, say:
+                <p>No entries to display.</p>
+              }
+
+            </Col>
 
 
-        {/* A react quirk requires 'className' rather than 'class' like you'd find in HTML */}
-        <div className="container">
-          {this.state.entries ?
-            //if true (entries exist in state), then map through the array of entries one by one and make a new Card element for each
-            this.state.entries.map((entry, index) => {
-              return <Card key={index} quote={entry.Quote} author={entry.Author} source={entry.Text_source} />
-            })
-            :
-            //else, say:
-            <p>No entries to display.</p>
-          }
 
-        </div>
+            <Col id="filters" className="container">
 
+              <div>
 
+                <Form />
+                <Filter />
 
-        <div id="filters" className="container">
+              </div>
 
-          <div>
-            <Form />
-            <Filter />
-          </div>
-
-        </div>
-
+            </Col>
+          </Row>
+        {/*</Container>*/}
 
       </div>
     )

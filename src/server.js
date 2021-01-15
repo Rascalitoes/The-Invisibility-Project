@@ -64,13 +64,14 @@ function initialize() {
             //retrieves ALL data from the database
             app.get('/show', function (req, res, next) {
                 console.log("in GET");
-                handleShowRand(res, invisCollection);
+                handleShow(res, invisCollection);
             });
 
             app.get('', function (req, res, next) {
                 console.log("in GET qty");
                 const parsedURL = url.parse(req.url,true);
-                handleShow(res, invisCollection, parsedURL.query.qty);
+                console.log(parsedURL.query.qty);
+                handleShowRand(res, invisCollection, Number(parsedURL.query.qty));
             });
 
             //Work in progress
@@ -97,7 +98,7 @@ function initialize() {
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
  */
 
-function handleShow(res, collection, quantity = "") {
+function handleShow(res, collection) {
 collection.find({}, { projection: { _id: 0 }}).toArray()
         .then(results => {
             //set the header and status
@@ -111,8 +112,8 @@ collection.find({}, { projection: { _id: 0 }}).toArray()
 
 //$sample returns a random sample of documents back. If all documents are unique,
 //then there will be no repeats.
-function handleShowRand(res, collection, quantity = "") {
-    collection.aggregate([{$sample: {size: 5}}]).toArray()
+function handleShowRand(res, collection, quantity = 1) {
+    collection.aggregate([{$sample: {size: quantity}}]).toArray()
         .then(results => {
             //set the header and status
             res.setHeader('content-type', 'Application/json');
