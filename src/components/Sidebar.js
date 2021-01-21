@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
+import {callAPI} from "../Services/API.js";
 
 export default class Filter extends Component {
   constructor(props){
     super(props);
-
+    //this.callAPI = App.callAPI.bind(this);
     this.state={
       meta: false,
     }
@@ -22,7 +23,7 @@ export default class Filter extends Component {
             <fieldset  id = "searchBox">
                <legend id = "h1"> Search:</legend>
                 <p><input type="text" className="searchTerm" size="50" placeholder="Search"/></p>
-                <input type = "submit" id = "submitbtn" value = "Search"/>
+                <input value = "Search" onClick={callAPI(1)} type="button" /> {/*type = "submit" id = "submitbtn"/>*/}
             </fieldset>
             
         </form>
