@@ -5,19 +5,19 @@ export default class Form extends Component {
     constructor(props) {
         super(props); 
         this.state = {
-            author: 'a',
-            quote: 'b',
-            source: 'c',
-            date: 'd',
-            keywords: 'e',
-            user: 'rdglick2'
+            author: '',
+            quote: '',
+            source: '',
+            date: '',
+            keywords: '',
+            user: ''
         };
         this.handleInputChange = this.handleInputChange.bind(this);
     }
     
     handleInputChange(event) {
         const target = event.target;
-        const value = target.name === 'author' ? target.checked : target.value;
+        const value = target.value;
         const name = target.name;
     
         this.setState({
@@ -25,7 +25,7 @@ export default class Form extends Component {
     }
     
     handleSubmit() {
-        alert('dfsasdf');
+        alert('Thank you for submitting a new (in)vsibility');
     }
     
     
