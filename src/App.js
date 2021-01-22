@@ -4,7 +4,7 @@ import Form from './components/Form';
 import Filter from './components/Sidebar';
 import './App.css';
 import invisibilitylogo from "./InvisibilityLogo.png";
-import {callAPI} from "./Services/API.js";
+import { callAPI } from "./Services/API.js";
 
 
 class App extends Component {
@@ -19,19 +19,31 @@ class App extends Component {
 
   componentDidMount() {
     /*
-     * Call the API (at the moment, it simply returns all of the results, not a specific number)
+     * Call the API
      * In my local environment, two servers must be running. The Express server & the React server
      * React is running on http://localthost:3000, while Express is running on http://localhost:2000
-     * To run the Express server, navigate to the-invisibility-project/src and run node server.js in the command line
-     * I don't need any special headers about access restrictions because I added the CORS library.
-     * To learn more about how this all works, please see src/server.js
+     * To run the Express server, navigate to the-invisibility-project/src/Services and run node server.js 
+     * in the command line. I don't need any special headers about access restrictions because I 
+     * added the CORS library. To learn more about how this all works, please see src/Services/server.js
      */
 
     callAPI(5)
-      .then(json => {
-        this.setState({entries: json});
-        this.setState({isLoaded: true});
-      });
+      .then(response => {
+        console.log(response);
+        this.setState({ entries: response });
+        this.setState({ isLoaded: true });
+      })
+      .catch(err => console.log(err));
+  }
+
+  updateCards = name => {
+    callAPI(1)
+      .then(response => {
+        console.log(response);
+        this.setState({ entries: response });
+        this.setState({ isLoaded: true });
+      })
+      .catch(err => console.log(err));
   }
 
   render() {
@@ -74,7 +86,7 @@ class App extends Component {
 
           <div>
             <Form />
-            <Filter />
+            <Filter onButtonPress={this.updateCards} />
           </div>
 
         </div>
