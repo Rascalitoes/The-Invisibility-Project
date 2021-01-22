@@ -36,8 +36,8 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
-  updateCards = name => {
-    callAPI(1)
+  updateCards = data => {
+    callAPI(data.cardNum,data.keywords)
       .then(response => {
         console.log(response);
         this.setState({ entries: response });
