@@ -4,6 +4,7 @@ const url = require('url');
 const https = require('https');
 const mongoClient = require('mongodb').MongoClient;
 var cors = require('cors');
+const {User} = require('./credentials.js');
 
 /*
  * The way this whole thing works, is a little complicated, I used tutorials from the following:
@@ -42,7 +43,12 @@ app.listen(port, function () {
 function initialize() {
     //By default, MongoDB is set up to port 27017 when you run it locally. I assume this will 
     //be different when deploying the Db on a server
-    const uri = "mongodb://127.0.0.1:27017";
+    //Replace <password> with the password for the roscoebc user. Replace myFirstDatabase with 
+    //the name of the database that connections will use by default. Ensure any option params are URL encoded.
+    const username = User.username;
+    const password = User.password;
+    const db = "invis_test1"
+    const uri = `mongodb+srv://${username}:${password}@cluster0.unw25.mongodb.net/${db}?retryWrites=true&w=majority`;
 
     const client = new mongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -56,7 +62,7 @@ function initialize() {
             console.log("connected to db");
 
             //Create an instance of the the MongoDB collection
-            const invisCollection = client.db("invis1").collection("invis_test_2");
+            const invisCollection = client.db("invis_test1").collection("quotes");
 
             //cors() allows us to verify requests between frontent and backend
             app.use(cors());
