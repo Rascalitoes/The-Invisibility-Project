@@ -5,6 +5,9 @@ const https = require('https');
 const mongoClient = require('mongodb').MongoClient;
 var cors = require('cors');
 const {User} = require('./credentials.js');
+const mongoose = require('mongoose');
+let quotes = require('./app/controllers/quote.controller.js');
+
 
 /*
  * The way this whole thing works, is a little complicated, I used tutorials from the following:
@@ -36,61 +39,63 @@ const {User} = require('./credentials.js');
 //change the port as needed
 const port = 2000;
 app.listen(port, function () {
-    initialize();
-    console.log(`listening on ${port}`);
+  initialize();
+  console.log(`listening on ${port}`);
 });
 
 function initialize() {
-    //By default, MongoDB is set up to port 27017 when you run it locally. I assume this will 
-    //be different when deploying the Db on a server
-    //Replace <password> with the password for the roscoebc user. Replace myFirstDatabase with 
-    //the name of the database that connections will use by default. Ensure any option params are URL encoded.
-    const username = User.username;
-    const password = User.password;
-    const db = "invis_test1"
-    const uri = `mongodb+srv://${username}:${password}@cluster0.unw25.mongodb.net/${db}?retryWrites=true&w=majority`;
+  //By default, MongoDB is set up to port 27017 when you run it locally. I assume this will 
+  //be different when deploying the Db on a server
+  //Replace <password> with the password for the roscoebc user. Replace myFirstDatabase with 
+  //the name of the database that connections will use by default. Ensure any option params are URL encoded.
+  const username = User.username;
+  const password = User.password;
+  const db = "invis_test1"
+  const uri = `mongodb+srv://${username}:${password}@cluster0.unw25.mongodb.net/${db}?retryWrites=true&w=majority`;
+  
+  //const client = new mongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-    const client = new mongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => {
+      console.log("connected to db");
 
-    client.connect(err => {
-        if (err) {
-            console.log("error");
-            console.log(err);
-            client.close();
-        }
-        else {
-            console.log("connected to db");
+      //Create an instance of the the MongoDB collection
+      const invisCollection = mongoose.connection.collection("quotes");
 
-            //Create an instance of the the MongoDB collection
-            const invisCollection = client.db("invis_test1").collection("quotes");
+      //cors() allows us to verify requests between frontent and backend
+      app.use(cors());
 
-            //cors() allows us to verify requests between frontent and backend
-            app.use(cors());
+      //retrieves ALL data from the database
+      app.get('/show', function (req, res, next) {
+        console.log("in GET");
+        quotes.showAll(res);
+      });
 
-            //retrieves ALL data from the database
-            app.get('/show', function (req, res, next) {
-                console.log("in GET");
-                handleShow(res, invisCollection);
-            });
+      //Using for testing, not to be used in final product
+      app.get('/show/test', quotes.showOne);
+      
+      /*
+      app.get('', function (req, res, next) {
+        console.log("in GET qty");
+        quotes.showRand(req, res);
+      });
+      */
 
-            app.get('', function (req, res, next) {
-                console.log("in GET qty");
-                const parsedURL = url.parse(req.url,true);
-                console.log(parsedURL.query.qty);
-                console.log(parsedURL.query.keywords);
-                handleShowRand(res, invisCollection, parsedURL);
-            });
+      app.get('', quotes.showRand);
 
-            //Work in progress
-            app.post('/', function (req, res) {
-                console.log("in POST");
-                const parsedURL = url.parse(req.url, true);
-                console.log(req.query.author + " | " + req.query.source + " | " + req.query.quote);
-                handleCreate(req.query.author, req.query.source, req.query.quote, res, invisCollection);
-            });
+      //Work in progress
+      app.post('/', function (req, res) {
+        console.log("in POST");
+        const parsedURL = url.parse(req.url, true);
+        console.log(req.query.author + " | " + req.query.source + " | " + req.query.quote);
+        handleCreate(req.query.author, req.query.source, req.query.quote, res, invisCollection);
+      });
 
 
-        }
+    }).catch(err => {
+      console.log("error");
+      console.log(err);
+      process.exit()
     });
 }
 
@@ -106,140 +111,140 @@ function initialize() {
  */
 
 function handleShow(res, collection, quantity = 0) {
-collection.find({}, { projection: { _id: 0 }}).toArray()
-        .then(results => {
-            //set the header and status
-            res.setHeader('content-type', 'Application/json');
-            res.statusCode = 200;
-            //send the JSON data to be displayed and read by the frontend
-            res.send(JSON.stringify(results));
-        })
-        .catch(error => console.error(error))
+  collection.find({}, { projection: { _id: 0 } }).toArray()
+    .then(results => {
+      //set the header and status
+      res.setHeader('content-type', 'Application/json');
+      res.statusCode = 200;
+      //send the JSON data to be displayed and read by the frontend
+      res.send(JSON.stringify(results));
+    })
+    .catch(error => console.error(error))
 }
 
 //$sample returns a random sample of documents back. If all documents are unique,
 //then there will be no repeats.
 function handleShowRand(res, collection, parsedURL) {
-    let quantity = Number(parsedURL.query.qty);
-    let keywords = parsedURL.query.keywords;
-    collection.aggregate([{$sample: {size: quantity}}]).toArray()
-        .then(results => {
-            //set the header and status
-            res.setHeader('content-type', 'Application/json');
-            res.statusCode = 200;
-            //send the JSON data to be displayed and read by the frontend
-            res.send(JSON.stringify(results));
-        })
-        .catch(error => console.error(error))
+  let quantity = Number(parsedURL.query.qty);
+  let keywords = parsedURL.query.keywords;
+  collection.aggregate([{ $sample: { size: quantity } }]).toArray()
+    .then(results => {
+      //set the header and status
+      res.setHeader('content-type', 'Application/json');
+      res.statusCode = 200;
+      //send the JSON data to be displayed and read by the frontend
+      res.send(JSON.stringify(results));
+    })
+    .catch(error => console.error(error))
 }
 
 
 
 
 function handleCreate(author, source, quote, res, collection) {
-    //call geolocation api and get the details
-    data = { "Author": author, "Text_source": source, "Quote": quote };
-    collection.insertOne(data)
-        .then((result, error) => {
-            if (error) {
-                console.log(error);
-            }
-        }).catch(error => console.error("error"))
-    // set the header and status code success and return the details of the ip
-    res.setHeader('content-type', 'Application/json');
-    res.statusCode = 200;
-    res.end(`record created: ${author}, ${source}, ${quote}`);
+  //call geolocation api and get the details
+  data = { "Author": author, "Text_source": source, "Quote": quote };
+  collection.insertOne(data)
+    .then((result, error) => {
+      if (error) {
+        console.log(error);
+      }
+    }).catch(error => console.error("error"))
+  // set the header and status code success and return the details of the ip
+  res.setHeader('content-type', 'Application/json');
+  res.statusCode = 200;
+  res.end(`record created: ${author}, ${source}, ${quote}`);
 }
 
 function handleUpdate(ipAddress, res, collection) {
-    //call geolocation api and get the details
-    var query = { ip: ipAddress };
-    collection.find(query, { projection: { _id: 0 } }).toArray()
-        .then(results => {
-            if (results.length > 0) {
-                getGeolocation(ipAddress)
-                    .then(response => {
-                        updateRecord(response, collection);
-                        res.setHeader('content-type', 'Application/json');
-                        res.statusCode = 200;
-                        var time = new Date();
-                        var respJson = { "ip": response.ip, "country": response.country, "city": response.city, "lastUpdated": time }
-                        res.end("record updated : " + JSON.stringify(respJson));
-                    },
-                        error => {
-                            res.statusCode = 400;
-                            res.end(error);
-                        })
-            }
-            else {
-                //ip not found
-                res.statusCode = 400;
-                res.send(`Read: ${ipAddress} not found`);
-            }
-        });
-}
-
-function handleRead(ipAddress, res, collection) {
-    var query = { ip: ipAddress };
-    collection.find(query, { projection: { _id: 0 } }).toArray()
-        .then(results => {
-            if (results.lenth > 0) {
-                console.log("results:");
-                console.log(results);
-                res.setHeader('content-type', 'Application/json');
-                res.statusCode = 200;
-                res.send(JSON.stringify(results));
-            }
-            else {
-                //ip not found
-                res.statusCode = 400;
-                res.send(`ReadL ${ipAddress} not found`);
-            }
-        });
-}
-
-function handleDelete(ipAddress, res, collection) {
-    //check if ip is in the table
-    var query = { ip: ipAddress };
-    collection.deleteOne(query, function (err, obj) {
-        if (err) {
-            res.statusCode = 400;
-            res.send(`Delete: ${ipAddress} not found`);
-        }
-        //n in results indicates the number of records deleted
-        if (obj.result.n == 0) {
-            res.statusCode = 400;
-            res.send(`Delete: ${ipAddress} not found`);
-        }
-        else {
+  //call geolocation api and get the details
+  var query = { ip: ipAddress };
+  collection.find(query, { projection: { _id: 0 } }).toArray()
+    .then(results => {
+      if (results.length > 0) {
+        getGeolocation(ipAddress)
+          .then(response => {
+            updateRecord(response, collection);
+            res.setHeader('content-type', 'Application/json');
             res.statusCode = 200;
-            res.send(`record deleted: ${ipAddress}`);
-        }
+            var time = new Date();
+            var respJson = { "ip": response.ip, "country": response.country, "city": response.city, "lastUpdated": time }
+            res.end("record updated : " + JSON.stringify(respJson));
+          },
+            error => {
+              res.statusCode = 400;
+              res.end(error);
+            })
+      }
+      else {
+        //ip not found
+        res.statusCode = 400;
+        res.send(`Read: ${ipAddress} not found`);
+      }
     });
 }
 
+function handleRead(ipAddress, res, collection) {
+  var query = { ip: ipAddress };
+  collection.find(query, { projection: { _id: 0 } }).toArray()
+    .then(results => {
+      if (results.lenth > 0) {
+        console.log("results:");
+        console.log(results);
+        res.setHeader('content-type', 'Application/json');
+        res.statusCode = 200;
+        res.send(JSON.stringify(results));
+      }
+      else {
+        //ip not found
+        res.statusCode = 400;
+        res.send(`ReadL ${ipAddress} not found`);
+      }
+    });
+}
+
+function handleDelete(ipAddress, res, collection) {
+  //check if ip is in the table
+  var query = { ip: ipAddress };
+  collection.deleteOne(query, function (err, obj) {
+    if (err) {
+      res.statusCode = 400;
+      res.send(`Delete: ${ipAddress} not found`);
+    }
+    //n in results indicates the number of records deleted
+    if (obj.result.n == 0) {
+      res.statusCode = 400;
+      res.send(`Delete: ${ipAddress} not found`);
+    }
+    else {
+      res.statusCode = 200;
+      res.send(`record deleted: ${ipAddress}`);
+    }
+  });
+}
+
 function insertRecord(entry, collection) {
-    // get current date to update last update the time
-    var time = new Date();
-    // add the entry to table ip is the key and country, city and last updated time are stored
-    data = { "ip": entry.ip, "country": entry.country, "city": entry.city, "lastUpdated": time }
-    collection.insertOne(data)
-        .then((result, error) => {
-            if (error) {
-                console.log(error);
-            }
-        }).catch(error => console.error("error"))
+  // get current date to update last update the time
+  var time = new Date();
+  // add the entry to table ip is the key and country, city and last updated time are stored
+  data = { "ip": entry.ip, "country": entry.country, "city": entry.city, "lastUpdated": time }
+  collection.insertOne(data)
+    .then((result, error) => {
+      if (error) {
+        console.log(error);
+      }
+    }).catch(error => console.error("error"))
 
 }
 
 function updateRecord(entry, collection) {
-    // get current date to update last updated time
-    var time = new Date();
-    // add the entry to table ip is the key and country, city and last updated time are stored
-    var query = { "ip": entry.ip }
-    data = { $set: { "ip": entry.ip, "country": entry.country, "city": entry.city, "lastUpdated": time } }
-    collection.updateOne(query, data)
-        .then((result, error) => {
-        })
-        .catch(error => console.error("error"))
+  // get current date to update last updated time
+  var time = new Date();
+  // add the entry to table ip is the key and country, city and last updated time are stored
+  var query = { "ip": entry.ip }
+  data = { $set: { "ip": entry.ip, "country": entry.country, "city": entry.city, "lastUpdated": time } }
+  collection.updateOne(query, data)
+    .then((result, error) => {
+    })
+    .catch(error => console.error("error"))
 }
