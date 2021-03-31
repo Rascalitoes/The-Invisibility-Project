@@ -6,7 +6,7 @@ const mongoClient = require('mongodb').MongoClient;
 var cors = require('cors');
 const {User} = require('./credentials.js');
 const mongoose = require('mongoose');
-let quotes = require('./app/controllers/quote.controller.js');
+let quotes = require('./controllers/quote.controller.js');
 
 
 /*

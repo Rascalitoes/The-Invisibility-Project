@@ -36,7 +36,12 @@ exports.showOne = (req, res) => {
 	Quote.findById("60521b898b3a3da67d2dcaf8")
 	.populate('Author Keywords')
     .then(quotes => {
-        res.send(quotes);
+		let returnJSON = {
+			Quote: quotes.Quote,
+			Author: quotes.Author.Name,
+			Text_source: quotes.Text_source
+		}
+        res.send(returnJSON);
     }).catch(err => {
 		res.status(500).send({
 			message: err.message
