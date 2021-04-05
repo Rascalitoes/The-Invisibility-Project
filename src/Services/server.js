@@ -4,10 +4,11 @@ const url = require('url');
 const https = require('https');
 const mongoClient = require('mongodb').MongoClient;
 var cors = require('cors');
-const {User} = require('./credentials.js');
+const { User } = require('./credentials.js');
 const mongoose = require('mongoose');
 let quotes = require('./controllers/quote.controller.js');
-
+app.use(express.urlencoded());
+app.use(express.json());
 
 /*
  * The way this whole thing works, is a little complicated, I used tutorials from the following:
@@ -52,7 +53,7 @@ function initialize() {
   const password = User.password;
   const db = "invis_test1"
   const uri = `mongodb+srv://${username}:${password}@cluster0.unw25.mongodb.net/${db}?retryWrites=true&w=majority`;
-  
+
   //const client = new mongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
   mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -73,7 +74,7 @@ function initialize() {
 
       //Using for testing, not to be used in final product
       app.get('/show/test', quotes.showOne);
-      
+
       /*
       app.get('', function (req, res, next) {
         console.log("in GET qty");
@@ -85,7 +86,29 @@ function initialize() {
 
       //Work in progress
       //app.post('/post', quotes.postQuote);
-      app.get('/post',quotes.postQuote);
+      app.post('/process_get', function (req, res) {
+        response = {
+          author: req.body.author,
+          quote: req.body.quote,
+          source: req.body.source,
+          date: req.body.date,
+          keywords: req.body.keywords,
+          user: req.body.user
+        };
+
+        //this line is optional and will print the response on the command prompt
+        //It's useful so that we know what infomration is being transferred 
+        //using the server
+        console.log(response);
+
+        //convert the response in JSON format
+        res.end(JSON.stringify(response));
+      });
+      /*
+      app.get('Form.js', function(req, res) {
+        res.sendFile(__dirname + "/" + "Form.js");
+    });
+    */
 
 
     }).catch(err => {
