@@ -1,7 +1,7 @@
 const mongoose = require('mongoose'), Schema = mongoose.Schema;
 
 const QuoteSchema = mongoose.Schema({
-    _id: { type: Schema.Types.ObjectId },
+    //_id: { type: Schema.Types.ObjectId },
     Quote: String,
     Text_source: String,
     Author: { type: Schema.Types.ObjectId, ref: 'Author' },

@@ -84,12 +84,8 @@ function initialize() {
       app.get('', quotes.showRand);
 
       //Work in progress
-      app.post('/', function (req, res) {
-        console.log("in POST");
-        const parsedURL = url.parse(req.url, true);
-        console.log(req.query.author + " | " + req.query.source + " | " + req.query.quote);
-        handleCreate(req.query.author, req.query.source, req.query.quote, res, invisCollection);
-      });
+      //app.post('/post', quotes.postQuote);
+      app.get('/post',quotes.postQuote);
 
 
     }).catch(err => {
