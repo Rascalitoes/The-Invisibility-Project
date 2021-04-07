@@ -16,7 +16,7 @@ exports.showAll = (res) => {
 			})
 		});
 };
-
+/*
 // Return qty number of quotes
 exports.showRand = (req, res) => {
 	const parsedURL = url.parse(req.url, true);
@@ -31,65 +31,133 @@ exports.showRand = (req, res) => {
 		})
 		.catch(error => console.error(error))
 }
+*/
+
+// Return qty number of quotes
+exports.showRand = (req, res) => {
+	const parsedURL = url.parse(req.url, true);
+	let quantity = Number(parsedURL.query.qty);
+	Quote.aggregate([{ $sample: { size: quantity } }])
+		.populate('Author')
+		.then(results => {
+			//set the header and status
+			res.setHeader('content-type', 'Application/json');
+			res.statusCode = 200;
+			//send the JSON data to be displayed and read by the frontend
+			let returnJSON = {
+				_id: results._id,
+				Quote: results.Quote,
+				Author: results.Author.Name,
+				Text_source: results.Text_source
+			}
+			res.send(JSON.stringify(returnJSON));
+		})
+		.catch(error => console.error(error))
+}
 
 //For testing purposes only
 exports.showOne = (req, res) => {
-	Quote.findById("60521b898b3a3da67d2dcaf8")
+	var returnput = Quote.findById("606ccf207b608edd3759e4d3")
 		.populate('Author Keywords')
 		.then(quotes => {
-			let returnJSON = {
-				Quote: quotes.Quote,
-				Author: quotes.Author.Name,
-				Text_source: quotes.Text_source
+			//let mapy = new Map(quotes)
+			let returnJSON = []
+			for (var card in quotes) {
+				console.log(card)
+				/*
+				returnJSON.push({
+					_id: card["_id"],
+					Quote: card["Quote"],
+					Author: card["Author"]["Name"],
+					Text_source: card["Text_source"]
+				})
+				*/
 			}
+			console.log("****************************")
+			res.setHeader('content-type', 'Application/json');
+			res.statusCode = 200;
+			res.send(returnJSON);//JSON.stringify(returnJSON));
+		}).catch(error => console.error(error));
+};
+
+exports.specialOne = (req, res) => {
+	Quote.find({Quote: {
+        $in: ["I'm an observer. I read about life. I research life. I find a corner in a room and melt into it. I can become invisible. It's an art, and I am a wonderful practitioner.",
+		 "Spookyman"]}})
+		.populate('Author Keywords')
+		.then(results => {
+			let returnJSON = []
+			for (var card in results){
+				returnJSON.push({
+					_id: results[card]["_id"],
+					Quote: results[card]["Quote"],
+					Author: results[card]["Author"]["Name"],
+					Text_source: results[card]["Text_source"]
+				})
+				//returnJSON.push(results[card]["Author"]["Name"])
+			}
+			res.setHeader('content-type', 'Application/json');
+			res.statusCode = 200;
 			res.send(returnJSON);
-		}).catch(err => {
-			res.status(500).send({
-				message: err.message
-			})
-		});
+			//console.log(results[1]["Author"]["Name"]);
+			//console.log(JSON.stringify(results))
+		}).catch(error => console.error(error));
+	//console.log(results);
+	//console.log(res.json(results));
+	//console.log(JSON.stringify(results))
+		/*
+		.then(quotes => {
+			var myVar = quotes
+			console.log(quotes)
+			console.log(type(myVar))
+			res.setHeader('content-type', 'Application/json');
+			res.statusCode = 200;
+			res.send(quotes);
+		}).catch(error => console.error(error));
+		*/
 };
 
 //Add a new quote
-exports.postQuote = (req, res) => {
-	const parsedURL = url.parse(req.url, true);
-
+exports.postQuote = (data) => {
 	var auth = new Author({
-		Name: parsedURL.query.author
+		Name: data.author
 	});
 
 	var user = new User({
-		Username: parsedURL.query.username
+		Username: data.user
 	});
-
-	//for now, I'm assuming that the keywords will come comma spearated
-	//if (parsedURL.query.keywords) {
-		keywords = parsedURL.query.keywords.split(", ");
-		keywordArr = [];
-		for (var k in keywords) {
-			if (keywords[k]) {
-				keywordArr.push(
-					new Keywords({
-						Word: k
-					})
-				);
+	/*
+		//for now, I'm assuming that the keywords will come comma spearated
+		//if (parsedURL.query.keywords) {
+			keywords = parsedURL.query.keywords.split(", ");
+			keywordArr = [];
+			for (var k in keywords) {
+				if (keywords[k]) {
+					keywordArr.push(
+						new Keywords({
+							Word: k
+						})
+					);
+				}
 			}
-		}
-	//}
+		//}
+		*/
 
 	var quote = new Quote({
-		Quote: parsedURL.query.quote,
-		Text_source: parsedURL.query.text_source,
+		Quote: data.quote,
+		Text_source: data.source,
 		Author: auth._id,
 		User: user._id,
-		Keywords: keywordArr(keyword => keyword._id)
+		//Keywords: keywordArr(keyword => keyword._id)
 	});
 
 	user.Quotes.push(quote._id);
 	auth.Quotes.push(quote._id);
+	/*
 	for (var ka in keywordArr) {
 		ka.Quotes.push(quote._id)
 	}
+	*/
 
 	quote.save(function (err) {
 		if (err) return console.error(err.stack)

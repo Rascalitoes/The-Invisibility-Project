@@ -7,7 +7,7 @@ var cors = require('cors');
 const { User } = require('./credentials.js');
 const mongoose = require('mongoose');
 let quotes = require('./controllers/quote.controller.js');
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 /*
@@ -82,7 +82,7 @@ function initialize() {
       });
       */
 
-      app.get('', quotes.showRand);
+      app.get('', quotes.specialOne);
 
       //Work in progress
       //app.post('/post', quotes.postQuote);
@@ -95,22 +95,10 @@ function initialize() {
           keywords: req.body.keywords,
           user: req.body.user
         };
-
-        //this line is optional and will print the response on the command prompt
-        //It's useful so that we know what infomration is being transferred 
-        //using the server
         console.log(response);
-
-        //convert the response in JSON format
         res.end(JSON.stringify(response));
+        quotes.postQuote(response);
       });
-      /*
-      app.get('Form.js', function(req, res) {
-        res.sendFile(__dirname + "/" + "Form.js");
-    });
-    */
-
-
     }).catch(err => {
       console.log("error");
       console.log(err);
