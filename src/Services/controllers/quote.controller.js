@@ -37,20 +37,27 @@ exports.showRand = (req, res) => {
 exports.showRand = (req, res) => {
 	const parsedURL = url.parse(req.url, true);
 	let quantity = Number(parsedURL.query.qty);
-	Quote.aggregate([{ $sample: { size: quantity } }])
-		.populate('Author')
+	Quote.aggregate([
+		{$sample: { size: quantity }},
+		{$lookup: {from: "authors",localField: "Author",foreignField: "_id",as: "Author_info"}}
+	])
+		//.populate('Author')
 		.then(results => {
 			//set the header and status
 			res.setHeader('content-type', 'Application/json');
 			res.statusCode = 200;
 			//send the JSON data to be displayed and read by the frontend
-			let returnJSON = {
-				_id: results._id,
-				Quote: results.Quote,
-				Author: results.Author.Name,
-				Text_source: results.Text_source
+			//only relevant data is pushed to returnJSON and sent
+			let returnJSON = []
+			for (var card in results){
+				returnJSON.push({
+					_id: results[card]["_id"],
+					Quote: results[card]["Quote"],
+					Author: results[card]["Author_info"][0]["Name"],
+					Text_source: results[card]["Text_source"]
+				})
 			}
-			res.send(JSON.stringify(returnJSON));
+			res.send(returnJSON);
 		})
 		.catch(error => console.error(error))
 }
