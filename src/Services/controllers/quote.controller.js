@@ -25,21 +25,21 @@ exports.showAll = (req, res) => {
 			res.statusCode = 200;
 			//send the JSON data to be displayed and read by the frontend
 			res.send(JSON.stringify(results));
-		  })
-		  .catch(error => console.error(error))
+		})
+		.catch(error => console.error(error))
 };
 
 // Return qty number of quotes
 exports.showRand = (req, res) => {
 	//req.url only returns ?qty=x, which the WHATWG URL API can't use on its own
 	//So I need to add in a host to create a pseudo-URL (the actual host doesn't matter)
-	const parsedURL = new URL(req.url,'https://localhost:2000/');
+	const parsedURL = new URL(req.url, 'https://localhost:2000/');
 	console.log(parsedURL.search)
 	let quantity = Number(parsedURL.searchParams.get('qty'));
 
 	Quote.aggregate([
-		{$sample: { size: quantity }},
-		{$lookup: {from: "authors",localField: "Author",foreignField: "_id",as: "Author_info"}}
+		{ $sample: { size: quantity } },
+		{ $lookup: { from: "authors", localField: "Author", foreignField: "_id", as: "Author_info" } }
 	])
 		//.populate('Author')
 		.then(results => {
@@ -49,7 +49,7 @@ exports.showRand = (req, res) => {
 			//send the JSON data to be displayed and read by the frontend
 			//only relevant data is pushed to returnJSON and sent
 			let returnJSON = []
-			for (var card in results){
+			for (var card in results) {
 				returnJSON.push({
 					_id: results[card]["_id"],
 					Quote: results[card]["Quote"],
@@ -71,38 +71,35 @@ exports.postQuote = (data) => {
 	var user = new User({
 		Username: data.user
 	});
-	/*
-		//for now, I'm assuming that the keywords will come comma spearated
-		//if (parsedURL.query.keywords) {
-			keywords = parsedURL.query.keywords.split(", ");
-			keywordArr = [];
-			for (var k in keywords) {
-				if (keywords[k]) {
-					keywordArr.push(
-						new Keywords({
-							Word: k
-						})
-					);
-				}
-			}
-		//}
-		*/
 
+	//for now, I'm assuming that the keywords will come comma spearated
+	var keyObjArr = [];
+	if (data.keywords) {
+		let keywordArr = data.keywords.split(", ");
+		keywordArr.forEach(keyword => 
+			keyObjArr.push(
+				new Keywords({
+					Word: keyword
+				})
+			)
+		)
+	}
+
+	keyObjIDs = []
+	keyObjArr.forEach(function(keyword){
+		keyObjIDs.push(keyword._id)
+	})
 	var quote = new Quote({
 		Quote: data.quote,
 		Text_source: data.source,
 		Author: auth._id,
 		User: user._id,
-		//Keywords: keywordArr(keyword => keyword._id)
+		Keywords: keyObjIDs
 	});
 
 	user.Quotes.push(quote._id);
 	auth.Quotes.push(quote._id);
-	/*
-	for (var ka in keywordArr) {
-		ka.Quotes.push(quote._id)
-	}
-	*/
+	keyObjArr.forEach(keyword => keyword.Quotes.push(quote._id));
 
 	quote.save(function (err) {
 		if (err) return console.error(err.stack)
@@ -118,5 +115,11 @@ exports.postQuote = (data) => {
 		if (err) return console.error(err.stack)
 		console.log("Username is added")
 	});
+
+	keyObjArr.forEach(keyword =>
+		keyword.save(function (err) {
+			if (err) return console.error(err.stack)
+			console.log("Keyword is added")
+		}))
 
 }
