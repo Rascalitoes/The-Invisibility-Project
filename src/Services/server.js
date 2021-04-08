@@ -67,21 +67,9 @@ function initialize() {
       app.use(cors());
 
       //retrieves ALL data from the database
-      app.get('/show', function (req, res, next) {
-        console.log("in GET");
-        quotes.showAll(res);
-      });
+      app.get('/show', quotes.showAll);
 
-      //Using for testing, not to be used in final product
-      app.get('/show/test', quotes.showOne);
-
-      /*
-      app.get('', function (req, res, next) {
-        console.log("in GET qty");
-        quotes.showRand(req, res);
-      });
-      */
-
+      //retrieves a specified number of random documents
       app.get('', quotes.showRand);
 
       //Work in progress
