@@ -51,12 +51,13 @@ function initialize() {
   //the name of the database that connections will use by default. Ensure any option params are URL encoded.
   const username = User.username;
   const password = User.password;
-  const db = "invis_test2"
+  const db = "invis_test1"
   const uri = `mongodb+srv://${username}:${password}@cluster0.unw25.mongodb.net/${db}?retryWrites=true&w=majority`;
 
   //const client = new mongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  //The extra fields after the uri are to prevent deprecated drivers and functions from being used
+  mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => {
       console.log("connected to db");
 

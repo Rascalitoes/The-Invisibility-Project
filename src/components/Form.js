@@ -5,12 +5,22 @@ export default class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      author: '',
-      quote: '',
-      source: '',
-      date: '',
-      keywords: '',
-      user: ''
+      current: {
+        author: '',
+        quote: '',
+        source: '',
+        date: '',
+        keywords: '',
+        user: ''
+      },
+      prevState: {
+        author: '',
+        quote: '',
+        source: '',
+        date: '',
+        keywords: '',
+        user: ''
+      }
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -27,23 +37,30 @@ export default class Form extends Component {
   }
 
   handleSubmit(event) {
-    alert('Thank you for submitting a new (in)vsibility');
-    event.preventDefault();
-    fetch('http://localhost:2000/process_get', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        author: this.state.author,
-        quote: this.state.quote,
-        source: this.state.source,
-        date: this.state.date,
-        keywords: this.state.keywords,
-        user: this.state.user
+    if (this.state.current !== this.state.prevState) {
+      alert('Thank you for submitting a new (in)vsibility');
+      event.preventDefault();
+      fetch('http://localhost:2000/process_get', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          author: this.state.author,
+          quote: this.state.quote,
+          source: this.state.source,
+          date: this.state.date,
+          keywords: this.state.keywords,
+          user: this.state.user
+        })
       })
-    })
+      this.setState({prevState: this.state.current})
+    }
+    else{
+      alert("You've already submit this!")
+      event.preventDefault();
+    }
   }
 
 

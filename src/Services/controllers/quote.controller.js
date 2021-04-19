@@ -3,6 +3,7 @@ const Author = require('../models/author.model.js');
 const Keywords = require('../models/keyword.model.js');
 const User = require('../models/user.model.js');
 const URL = require('url').URL;
+const { db } = require('../models/quote.model.js');
 
 /*
  * Some important things to know for the following functions:
@@ -64,62 +65,86 @@ exports.showRand = (req, res) => {
 
 //Add a new quote
 exports.postQuote = (data) => {
-	var auth = new Author({
-		Name: data.author
-	});
 
-	var user = new User({
-		Username: data.user
-	});
-
-	//for now, I'm assuming that the keywords will come comma spearated
-	var keyObjArr = [];
-	if (data.keywords) {
-		let keywordArr = data.keywords.split(", ");
-		keywordArr.forEach(keyword => 
-			keyObjArr.push(
-				new Keywords({
-					Word: keyword
-				})
-			)
-		)
+	/* 
+	 * All of these are async functions (you can use await) because there's some issues with 
+	 * queries. I don't fully understand it, but it seems like you have to use await or .then()
+	 * to get a desirable answer when using queries.
+	 */
+	async function initializeModel(fields) {
+		//Finds or (if no document exists) creates a new document, and returns its _id
+		const docResults = await this.findOne(fields);
+		if (docResults) {
+			return docResults._id;
+		}
+		else {
+			const newDoc = await new this(fields);
+			newDoc.save();
+			return newDoc._id;
+		}
 	}
 
-	keyObjIDs = []
-	keyObjArr.forEach(function(keyword){
-		keyObjIDs.push(keyword._id)
-	})
-	var quote = new Quote({
-		Quote: data.quote,
-		Text_source: data.source,
-		Author: auth._id,
-		User: user._id,
-		Keywords: keyObjIDs
-	});
+	//This is used for dealing with arrays of keywords
+	async function initializeManyKeywords(array) {
+		let keywIDs = [];
+		//Unfortunately, .forEach() does not work with async functions, so must create a for loop
+		for (let item in array) {
+			let tempID = await initializeModel.call(Keywords, { Word: array[item] })
+			keywIDs.push(tempID)
+		}
+		return keywIDs
+	}
 
-	user.Quotes.push(quote._id);
-	auth.Quotes.push(quote._id);
-	keyObjArr.forEach(keyword => keyword.Quotes.push(quote._id));
+	async function getDocumentIDs(data) {
+		//Returns the relevant documents' _ids.
 
-	quote.save(function (err) {
-		if (err) return console.error(err.stack)
-		console.log("Quote is added")
-	});
+		var completeFormattedData = {
+			Quote: data.quote,
+			Text_source: data.source,
+			Author: data.author,
+			User: data.user,
+			Keywords: data.keywords
+		}
 
-	auth.save(function (err) {
-		if (err) return console.error(err.stack)
-		console.log("Author is added")
-	});
+		//To avoid duplicates, a query is made to the database for any EXACT string duplicates
+		Quote.findOne(fields)
+			.then(duplicate => {
+				if (!duplicate) {
+					//Since the initializeModel function uses await, so does this function
+					const [quoteID, authID, userID, keyIDs] = await Promise.all([
+						//By using the call() method, the given 'this' value can be set to the mongoose models
+						//Technically, we don't have to use initializeModel() for the Quote model, but it makes things look cleaner
+						initializeModel.call(Quote, completeFormattedData),
+						initializeModel.call(Author, { Name: data.author }),
+						initializeModel.call(User, { Username: data.user }),
+						initializeManyKeywords(data.keywords.split(", "))
+					]);
+				}
+				else {
+					const [quoteID, authID, userID, keyIDs] = null;
+				}
+			})//end of .then()
 
-	user.save(function (err) {
-		if (err) return console.error(err.stack)
-		console.log("Username is added")
-	});
+		//return an object literal of all the IDs
+		return { quoteID, authID, userID, keyIDs };
+	}
 
-	keyObjArr.forEach(keyword =>
-		keyword.save(function (err) {
-			if (err) return console.error(err.stack)
-			console.log("Keyword is added")
-		}))
+
+
+	async function addIDtoDocuments(ID) {
+		//Since the quote doesn't change, all the data was set in getDocumentIDs
+		await Author.findOneAndUpdate({ _id: ID.authID }, { $push: { Quotes: ID.quoteID } });
+		await User.findOneAndUpdate({ _id: ID.userID }, { $push: { Quotes: ID.quoteID } });
+		ID.keyIDs.forEach(async keyword => {
+			await Keywords.findOneAndUpdate({ _id: keyword }, { $push: { Quotes: ID.quoteID } })
+		});
+	}
+
+	getDocumentIDs(data)
+		.then(answer => {
+			if (answer.quoteID != null) {
+				addIDtoDocuments(answer)
+			}
+		})
 
 }
