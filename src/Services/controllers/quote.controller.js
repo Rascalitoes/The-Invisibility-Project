@@ -104,7 +104,6 @@ exports.postQuote = (data) => {
 			User: data.user,
 			Keywords: data.keywords
 		})
-		console.log(result);
 		if (result == null) {
 			return false
 		}
