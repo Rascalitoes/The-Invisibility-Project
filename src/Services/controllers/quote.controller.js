@@ -95,7 +95,23 @@ exports.postQuote = (data) => {
 	}
 
 
-
+	async function hasDuplicates(data) {
+		//Returns true if there are duplicates, false if there aren't any
+		const result = await Quote.findOne({
+			Quote: data.quote,
+			Text_source: data.source,
+			Author: data.author,
+			User: data.user,
+			Keywords: data.keywords
+		})
+		console.log(result);
+		if (result == null) {
+			return false
+		}
+		else {
+			return true
+		}
+	}
 
 	async function getDocumentIDs(data) {
 		//Returns the relevant documents' _ids.
@@ -132,6 +148,12 @@ exports.postQuote = (data) => {
 		});
 	}
 
-	getDocumentIDs(data)
-		.then(addIDtoDocuments)
+	//This is what is run when postQuote is called
+	hasDuplicates(data)
+		.then(result => {
+			if (!result) {
+				getDocumentIDs(data)
+					.then(addIDtoDocuments)
+			}
+		})
 }
