@@ -39,8 +39,8 @@ exports.showRand = (req, res) => {
 	let quantity = Number(parsedURL.searchParams.get('qty'));
 
 	Quote.aggregate([
-		{ $sample: { size: quantity } },
-		{ $lookup: { from: "authors", localField: "Author", foreignField: "_id", as: "Author_info" } }
+		{ $sample: { size: quantity } }//,
+		//{ $lookup: { from: "authors", localField: "Author", foreignField: "_id", as: "Author_info" } }
 	])
 		//.populate('Author')
 		.then(results => {
@@ -52,9 +52,8 @@ exports.showRand = (req, res) => {
 			let returnJSON = []
 			for (var card in results) {
 				returnJSON.push({
-					_id: results[card]["_id"],
 					Quote: results[card]["Quote"],
-					Author: results[card]["Author_info"][0]["Name"],
+					Author: results[card]["Author"],
 					Text_source: results[card]["Text_source"]
 				})
 			}
@@ -95,39 +94,32 @@ exports.postQuote = (data) => {
 		return keywIDs
 	}
 
+
+
+
 	async function getDocumentIDs(data) {
 		//Returns the relevant documents' _ids.
 
-		var completeFormattedData = {
-			Quote: data.quote,
-			Text_source: data.source,
-			Author: data.author,
-			User: data.user,
-			Keywords: data.keywords
-		}
-
-		//To avoid duplicates, a query is made to the database for any EXACT string duplicates
-		Quote.findOne(fields)
-			.then(duplicate => {
-				if (!duplicate) {
-					//Since the initializeModel function uses await, so does this function
-					const [quoteID, authID, userID, keyIDs] = await Promise.all([
-						//By using the call() method, the given 'this' value can be set to the mongoose models
-						//Technically, we don't have to use initializeModel() for the Quote model, but it makes things look cleaner
-						initializeModel.call(Quote, completeFormattedData),
-						initializeModel.call(Author, { Name: data.author }),
-						initializeModel.call(User, { Username: data.user }),
-						initializeManyKeywords(data.keywords.split(", "))
-					]);
-				}
-				else {
-					const [quoteID, authID, userID, keyIDs] = null;
-				}
-			})//end of .then()
+		//Since the initializeModel function uses await, so does this function
+		const [quoteID, authID, userID, keyIDs] = await Promise.all([
+			//By using the call() method, the given 'this' value can be set to the mongoose models
+			//Technically, we don't have to use initializeModel() for the Quote model, but it makes things look cleaner
+			initializeModel.call(Quote, {
+				Quote: data.quote,
+				Text_source: data.source,
+				Author: data.author,
+				User: data.user,
+				Keywords: data.keywords
+			}),
+			initializeModel.call(Author, { Name: data.author }),
+			initializeModel.call(User, { Username: data.user }),
+			initializeManyKeywords(data.keywords.split(", "))
+		]);
 
 		//return an object literal of all the IDs
 		return { quoteID, authID, userID, keyIDs };
 	}
+
 
 
 
@@ -141,10 +133,5 @@ exports.postQuote = (data) => {
 	}
 
 	getDocumentIDs(data)
-		.then(answer => {
-			if (answer.quoteID != null) {
-				addIDtoDocuments(answer)
-			}
-		})
-
+		.then(addIDtoDocuments)
 }

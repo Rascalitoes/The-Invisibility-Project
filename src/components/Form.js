@@ -55,7 +55,8 @@ export default class Form extends Component {
           user: this.state.user
         })
       })
-      this.setState({prevState: this.state.current})
+      //console.log("YAy!");
+      //this.setState({prevState: this.state.current})
     }
     else{
       alert("You've already submit this!")
