@@ -88,8 +88,15 @@ exports.postQuote = (data) => {
 		let keywIDs = [];
 		//Unfortunately, .forEach() does not work with async functions, so must create a for loop
 		for (let item in array) {
-			let tempID = await initializeModel.call(Keywords, { Word: array[item] })
-			keywIDs.push(tempID)
+			let keyw = await Keywords.findOne({ Word: array[item] });
+			if (keyw) {
+				keywIDs.push(docResults._id);
+			}
+			else {
+				let newKeyw = await new Keywords({ Word: array[item], Inspected: false });
+				newKeyw.save();
+				keywIDs.push(newKeyw._id);
+			}
 		}
 		return keywIDs
 	}
@@ -124,7 +131,8 @@ exports.postQuote = (data) => {
 				Text_source: data.source,
 				Author: data.author,
 				User: data.user,
-				Keywords: data.keywords
+				Keywords: data.keywords.split(", "),
+				Inspected: false
 			}),
 			initializeModel.call(Author, { Name: data.author }),
 			initializeModel.call(User, { Username: data.user }),

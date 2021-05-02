@@ -38,7 +38,7 @@ export default class Form extends Component {
 
   handleSubmit(event) {
     if (this.state.current !== this.state.prevState) {
-      alert('Thank you for submitting a new (in)vsibility');
+      alert('Thank you for submitting a new (in)visibility');
       event.preventDefault();
       fetch('http://localhost:2000/process_get', {
         method: 'POST',
@@ -59,7 +59,7 @@ export default class Form extends Component {
       //this.setState({prevState: this.state.current})
     }
     else{
-      alert("You've already submit this!")
+      alert("You've already submitted this!")
       event.preventDefault();
     }
   }
@@ -87,14 +87,14 @@ export default class Form extends Component {
           </label>
 
           <label>Source:<br />
-            <input type="text" name="source" id="source" size="50" required
+            <input type="text" name="source" id="source" size="50"
               onChange={this.handleInputChange}
               value={this.state.source}
             /><br />
           </label>
 
           <label>Date:<br />
-            <input type="text" name="date" id="date" size="50" required
+            <input type="text" name="date" id="date" size="50"
               onChange={this.handleInputChange}
               value={this.state.date}
             /><br />
@@ -103,7 +103,7 @@ export default class Form extends Component {
           <label>Keywords (comma-separate):<br />
             <input type="text" name="keywords" id="keywords" size="50"
               value={this.state.keywords}
-              onChange={this.handleInputChange} required
+              onChange={this.handleInputChange}
             /><br />
           </label>
 
