@@ -50,11 +50,10 @@ exports.showRand = (req, res) => {
 	//req.url only returns ?qty=x, which the WHATWG URL API can't use on its own
 	//So I need to add in a host to create a pseudo-URL (the actual host doesn't matter)
 	const parsedURL = new URL(req.url, 'https://localhost:2000/');
-	console.log(parsedURL.search)
 	let quantity = Number(parsedURL.searchParams.get('qty'));
 
-	Quote.aggregate([{ $sample: { size: quantity } },
-	{ $match: { "Inspected": true } }])
+	Quote.aggregate([{ $match: { "Inspected": true } },
+	{ $sample: { size: quantity } }])
 		.then(results => {
 			//set the header and status
 			res.setHeader('content-type', 'Application/json');
@@ -67,10 +66,9 @@ exports.showRand = (req, res) => {
 
 exports.searchFor = (req, res) => {
 	const parsedURL = new URL(req.url, 'https://localhost:2000/');
-	console.log(parsedURL.search)
 	let searchTerm = parsedURL.searchParams.get('search');
 
-	Quote.aggregate([
+	Quote.aggregate([{ $match: { "Inspected": true } },
 		{
 			$search: {
 				"phrase": {
@@ -78,8 +76,7 @@ exports.searchFor = (req, res) => {
 					"path": ["Quote", "Text_source", "Author", "Keywords"]
 				}
 			}
-		},
-		{ $match: { "Inspected": true } }
+		}
 	])
 		.then(results => {
 			//set the header and status
