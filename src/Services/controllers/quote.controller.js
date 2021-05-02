@@ -16,6 +16,21 @@ const { db } = require('../models/quote.model.js');
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
  */
 
+//Format the data for use on the webpage
+function formatForPage(results) {
+	//send the JSON data to be displayed and read by the frontend
+	//only relevant data is pushed to returnJSON and sent
+	let returnJSON = []
+	for (var card in results) {
+		returnJSON.push({
+			Quote: results[card]["Quote"],
+			Author: results[card]["Author"],
+			Text_source: results[card]["Text_source"]
+		})
+	}
+	return returnJSON
+}
+
 // Get All Quotes & Data
 exports.showAll = (req, res) => {
 	Quote.find()
@@ -38,26 +53,40 @@ exports.showRand = (req, res) => {
 	console.log(parsedURL.search)
 	let quantity = Number(parsedURL.searchParams.get('qty'));
 
-	Quote.aggregate([
-		{ $sample: { size: quantity } }//,
-		//{ $lookup: { from: "authors", localField: "Author", foreignField: "_id", as: "Author_info" } }
-	])
-		//.populate('Author')
+	Quote.aggregate([{ $sample: { size: quantity } },
+	{ $match: { "Inspected": true } }])
 		.then(results => {
 			//set the header and status
 			res.setHeader('content-type', 'Application/json');
 			res.statusCode = 200;
-			//send the JSON data to be displayed and read by the frontend
-			//only relevant data is pushed to returnJSON and sent
-			let returnJSON = []
-			for (var card in results) {
-				returnJSON.push({
-					Quote: results[card]["Quote"],
-					Author: results[card]["Author"],
-					Text_source: results[card]["Text_source"]
-				})
+			//format data and send back
+			res.send(formatForPage(results));
+		})
+		.catch(error => console.error(error))
+}
+
+exports.searchFor = (req, res) => {
+	const parsedURL = new URL(req.url, 'https://localhost:2000/');
+	console.log(parsedURL.search)
+	let searchTerm = parsedURL.searchParams.get('search');
+
+	Quote.aggregate([
+		{
+			$search: {
+				"phrase": {
+					"query": searchTerm,
+					"path": ["Quote", "Text_source", "Author", "Keywords"]
+				}
 			}
-			res.send(returnJSON);
+		},
+		{ $match: { "Inspected": true } }
+	])
+		.then(results => {
+			//set the header and status
+			res.setHeader('content-type', 'Application/json');
+			res.statusCode = 200;
+			//format data and send back
+			res.send(formatForPage(results));
 		})
 		.catch(error => console.error(error))
 }

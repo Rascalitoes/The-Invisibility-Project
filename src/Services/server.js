@@ -88,6 +88,11 @@ function initialize() {
         res.end(JSON.stringify(response));
         quotes.postQuote(response);
       });
+
+      //Search functionality
+      app.get('/search')
+
+
     }).catch(err => {
       console.log("error");
       console.log(err);
