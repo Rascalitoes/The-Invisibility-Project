@@ -1,5 +1,39 @@
 import React, { Component } from 'react';
 
+
+document.addEventListener("DOMContentLoaded", function () {
+
+  function returnOptions() {
+    return fetch("http://localhost:2000/keywords")
+      .then(response => response.json())
+      .catch(err => {
+        console.log(err)
+      });
+  }
+
+  function createDLOption(word) {
+    console.log(word);
+    let option = document.createElement("option");
+    option.value = word;
+    option.innerHTML = word;
+    return option
+  }
+
+
+  const DL = document.createElement("datalist");
+  DL.id = "keywordOptions";
+
+  returnOptions().then(optionValues => {
+    for (let word in optionValues) {
+      DL.appendChild(createDLOption(optionValues[word]));
+      console.log("Yay" + word);
+    }
+  })
+
+  document.querySelector("#keywordArea").appendChild(DL);
+})
+
+
 export default class Filter extends Component {
   constructor(props) {
     super(props);
@@ -44,9 +78,19 @@ export default class Filter extends Component {
 
         </form>
 
+        <form className="display" autoComplete="off">
+          <fieldset id="searchBox">
+            <legend id="h1"> Keyword Search:</legend>
+            <p id="keywordArea"><input type="text" list="keywordOptions" name='keywords' size="50" placeholder="Keyword" onChange={this.handleChange} value={this.state.value} />
+            </p>
+            <input value="Search" type="button" onClick={this.handleButtonPress} />
+          </fieldset>
+
+        </form>
+
 
         {/*using this.state.meta[x] allows one to change the meta names at the top once, removing
-      the requirement to search through the document to find all other instances of the names */}
+      the requirement to search through the document to find all other instances of the names 
         <form className="display" id="metadataFilter">
           <fieldset>
             <legend id="h2">Filter Metadata: </legend>
@@ -57,6 +101,7 @@ export default class Filter extends Component {
           </fieldset>
 
         </form>
+        */}
 
 
         <form className="display" id="tileNumber">

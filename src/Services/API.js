@@ -4,7 +4,7 @@ export function callAPI(quantity = "/show", keywords = "") {
     //Alternatively, you can go to package.json, and set "proxy":"http://robertglick.com", and fetch("/show")
     //You could write a function to randomize the this.state.entries array then store it in state for random card order, like in the original
     let queries = addQueries({ "qty": quantity, "keywords": keywords });
-    console.log(queries);
+    //console.log(queries);
     return fetch(`http://localhost:2000${queries}`)
         .then(response => response.json())
         .catch(err => {
