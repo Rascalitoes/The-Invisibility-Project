@@ -27,7 +27,7 @@ export default class Form extends Component {
         source: '',
         date: '',
         keywords: '',
-        user: ''
+        email: ''
       },
       prevState: {
         author: '',
@@ -35,7 +35,7 @@ export default class Form extends Component {
         source: '',
         date: '',
         keywords: '',
-        user: ''
+        email: ''
       }
     };
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -68,7 +68,7 @@ export default class Form extends Component {
           source: this.state.source,
           date: this.state.date,
           keywords: this.state.keywords,
-          user: this.state.user
+          email: this.state.email
         })
       })
       //console.log("YAy!");
@@ -124,9 +124,9 @@ export default class Form extends Component {
           </label>
 
           <label>Email: <button class="popup" onClick={(event) => createPopup(event,"emailPopup")}>?<span class="popuptextright" id="emailPopup">A Simple Popup!</span></button><br />
-            <input type="text" name="user" id="user" size="50"
+            <input type="email" name="email" id="email" size="50"
               onChange={this.handleInputChange}
-              value={this.state.user}
+              value={this.state.email}
             /><br /><br />
           </label>
 
