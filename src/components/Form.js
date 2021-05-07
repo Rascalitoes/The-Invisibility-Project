@@ -1,5 +1,21 @@
 import React, { Component } from 'react';
 
+function createPopup(event,id){
+  event.preventDefault();
+  var popup = document.getElementById(id);
+  var len = popup.innerHTML.length;
+  if(len > 40){
+    popup.style.width = "40ex"
+  }
+  else if (len < 20){
+    popup.style.width = "160px"
+  }
+  else{
+    popup.style.width = len.toString()+"ex"
+  }
+  popup.classList.toggle("show");
+}
+
 export default class Form extends Component {
 
   constructor(props) {
@@ -72,42 +88,42 @@ export default class Form extends Component {
         <p id="formHeader">Enter a new (In)Visibility:</p>
         <form onSubmit={this.handleSubmit}>
 
-          <label>Author:<br />
+          <label>Author: * <button class="popup" onClick={(event) => createPopup(event,"authorPopup")}>?<span class="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
             <input type="text" name="author" id="author" size="50" required
               onChange={this.handleInputChange}
               value={this.state.author}
             /><br />
           </label>
 
-          <label>Quote:<br />
+          <label>Quote: * <button class="popup" onClick={(event) => createPopup(event,"quotePopup")}>?<span class="popuptextright" id="quotePopup">A Simple Popup!</span></button><br />
             <textarea name="quote" id="quote" rows="5" cols="42" required
               onChange={this.handleInputChange}
               value={this.state.quote}
             ></textarea><br />
           </label>
 
-          <label>Source:<br />
+          <label>Source: <button class="popup" onClick={(event) => createPopup(event,"sourcePopup")}>?<span class="popuptextright" id="sourcePopup">A Simple Popup!</span></button><br />
             <input type="text" name="source" id="source" size="50"
               onChange={this.handleInputChange}
               value={this.state.source}
             /><br />
           </label>
 
-          <label>Date:<br />
+          <label>Date: <button class="popup" onClick={(event) => createPopup(event,"datePopup")}>?<span class="popuptextright" id="datePopup">A Simple Popup!</span></button><br />
             <input type="text" name="date" id="date" size="50"
               onChange={this.handleInputChange}
               value={this.state.date}
             /><br />
           </label>
 
-          <label>Keywords (comma-separate):<br />
+          <label>Keywords (comma-separate): <button class="popup" onClick={(event) => createPopup(event,"keywordsPopup")}>?<span class="popuptextright" id="keywordsPopup">A Simple Popup!</span></button><br />
             <input type="text" name="keywords" id="keywords" size="50"
               value={this.state.keywords}
               onChange={this.handleInputChange}
             /><br />
           </label>
 
-          <label>User:<br />
+          <label>Email: <button class="popup" onClick={(event) => createPopup(event,"emailPopup")}>?<span class="popuptextright" id="emailPopup">A Simple Popup!</span></button><br />
             <input type="text" name="user" id="user" size="50"
               onChange={this.handleInputChange}
               value={this.state.user}

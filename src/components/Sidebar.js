@@ -33,6 +33,12 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelector("#keywordArea").appendChild(DL);
 })
 
+function createPopup(event,id){
+  event.preventDefault();
+  var popup = document.getElementById(id);
+  popup.classList.toggle("show");
+}
+
 
 export default class Filter extends Component {
   constructor(props) {
@@ -71,7 +77,7 @@ export default class Filter extends Component {
 
         <form className="display">
           <fieldset id="searchBox">
-            <legend id="h1"> Search:</legend>
+            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"generalSearchPopup")}>?<span class="popuptext" id="generalSearchPopup">A Simple Popup!</span></button> Search:</legend>
             <p><input type="text" name='keywords' size="50" placeholder="Search" onChange={this.handleChange} value={this.state.value} /></p>
             <input value="Search" type="button" onClick={this.handleButtonPress} />
           </fieldset>
@@ -80,7 +86,7 @@ export default class Filter extends Component {
 
         <form className="display" autoComplete="off">
           <fieldset id="searchBox">
-            <legend id="h1"> Keyword Search:</legend>
+            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"keywordSearchPopup")}>?<span class="popuptext" id="keywordSearchPopup">A Simple Popup!</span></button> Keyword Search:</legend>
             <p id="keywordArea"><input type="text" list="keywordOptions" name='keywords' size="50" placeholder="Keyword" onChange={this.handleChange} value={this.state.value} />
             </p>
             <input value="Search" type="button" onClick={this.handleButtonPress} />
