@@ -4,6 +4,7 @@ const Keywords = require('../models/keyword.model.js');
 const User = require('../models/user.model.js');
 const URL = require('url').URL;
 const { db } = require('../models/quote.model.js');
+const { type } = require('os');
 
 /*
  * Some important things to know for the following functions:
@@ -49,11 +50,26 @@ exports.showAll = (req, res) => {
 exports.showRand = (req, res) => {
 	//req.url only returns ?qty=x, which the WHATWG URL API can't use on its own
 	//So I need to add in a host to create a pseudo-URL (the actual host doesn't matter)
+	/*
 	const parsedURL = new URL(req.url, 'https://localhost:2000/');
 	let quantity = Number(parsedURL.searchParams.get('qty'));
+	let terms = Number(parsedURL.searchParams.get('terms'));
+	let searchTerms = "";
+	
+	for(let i in terms){
+		if(terms[i].includes(" ")){
+			searchTerms += "\""+terms[i]+"\""+" ";
+			console.log(searchTerms);
+		}
+		else{
+			searchTerms += terms[i]+" ";
+		}
+	}
+	*/
 
-	Quote.aggregate([{ $match: { "Inspected": true } },
-	{ $sample: { size: quantity } }])
+	Quote.aggregate([
+		{ $match: { "Inspected": true } },
+		{ $sample: { size: Number(req.query.qty) } }])
 		.then(results => {
 			//set the header and status
 			res.setHeader('content-type', 'Application/json');
@@ -65,18 +81,35 @@ exports.showRand = (req, res) => {
 }
 
 exports.searchFor = (req, res) => {
-	const parsedURL = new URL(req.url, 'https://localhost:2000/');
-	let searchTerm = parsedURL.searchParams.get('search');
 
-	Quote.aggregate([{ $match: { "Inspected": true } },
+	function trimAndRemove(arr){
+		var returnArr = []
+		for(let i in arr){
+			if(arr[i] != ''){
+				returnArr.push(arr[i].trim());
+			}
+		}
+		return returnArr;
+	}
+
+	//This line does two things: splits the query terms that were delivered in 
+	//comma-separated format, and removes and unwanted blank spaces
+	let terms = trimAndRemove(req.query.terms.split(","));
+	console.log(terms)
+
+	Quote.aggregate([
+		//The $search query REQUIRES a search index in your MongoDB cluster
+		//https://docs.atlas.mongodb.com/data-explorer/indexes/#create-an-index
 		{
 			$search: {
 				"phrase": {
-					"query": searchTerm,
-					"path": ["Quote", "Text_source", "Author", "Keywords"]
+					"query": terms,
+					"path": "Quote"
 				}
 			}
-		}
+		},
+		{ $match: { "Inspected": true } },
+		{ $sample: { size: Number(req.query.qty) } }
 	])
 		.then(results => {
 			//set the header and status

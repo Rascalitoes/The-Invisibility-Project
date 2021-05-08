@@ -72,7 +72,14 @@ function initialize() {
       app.get('/show', quotes.showAll);
 
       //retrieves a specified number of random documents
-      app.get('', quotes.showRand);
+      app.get('', function(req,res){
+        if(req.query.hasOwnProperty('terms')){
+          quotes.searchFor(req,res)
+        }
+        else{
+          quotes.showRand(req,res);
+        }
+      });
 
       //Work in progress
       //app.post('/post', quotes.postQuote);

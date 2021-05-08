@@ -37,7 +37,9 @@ class App extends Component {
   }
 
   updateCards = data => {
-    callAPI(data.cardNum,data.keywords)
+    //let search = data.searchTerms.split(",").concat(data.keywords.split(","));
+    let search = data.searchTerms+","+data.keywords;
+    callAPI(data.cardNum, search)
       .then(response => {
         console.log(response);
         this.setState({ entries: response });

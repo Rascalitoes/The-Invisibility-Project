@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function createDLOption(word) {
-    console.log(word);
     let option = document.createElement("option");
     option.value = word;
     option.innerHTML = word;
@@ -26,7 +25,6 @@ document.addEventListener("DOMContentLoaded", function () {
   returnOptions().then(optionValues => {
     for (let word in optionValues) {
       DL.appendChild(createDLOption(optionValues[word]));
-      console.log("Yay" + word);
     }
   })
 
@@ -48,6 +46,7 @@ export default class Filter extends Component {
       meta: ["author", "source", "origin"],
       metaValues: [false, false, false],
       cardNum: 5,
+      searchTerms: "",
       keywords: "",
       author: false, source: false, origin: false,
     }
@@ -66,6 +65,7 @@ export default class Filter extends Component {
     this.props.onButtonPress(this.state);
     alert("cardNum: " + this.state.cardNum
       + "\nkeywords: " + this.state.keywords
+      + "\nsearch terms: " + this.state.searchTerms
       + "\nmetadata: " + this.state.author + this.state.source + this.state.origin);
   }
 
@@ -77,8 +77,8 @@ export default class Filter extends Component {
 
         <form className="display">
           <fieldset id="searchBox">
-            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"generalSearchPopup")}>?<span class="popuptext" id="generalSearchPopup">A Simple Popup!</span></button> Search:</legend>
-            <p><input type="text" name='keywords' size="50" placeholder="Search" onChange={this.handleChange} value={this.state.value} /></p>
+            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"generalSearchPopup")}>?<span class="popuptext" id="generalSearchPopup">You can search several keywords by using commas e.g. cat, dog</span></button> Search:</legend>
+            <p><input type="text" name='searchTerms' size="50" placeholder="Search" onChange={this.handleChange} value={this.state.value} /></p>
             <input value="Search" type="button" onClick={this.handleButtonPress} />
           </fieldset>
 
@@ -86,7 +86,7 @@ export default class Filter extends Component {
 
         <form className="display" autoComplete="off">
           <fieldset id="searchBox">
-            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"keywordSearchPopup")}>?<span class="popuptext" id="keywordSearchPopup">A Simple Popup!</span></button> Keyword Search:</legend>
+            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"keywordSearchPopup")}>?<span class="popuptext" id="keywordSearchPopup">You can search several keywords by using commas e.g. cat, dog</span></button> Keyword Search:</legend>
             <p id="keywordArea"><input type="text" list="keywordOptions" name='keywords' size="50" placeholder="Keyword" onChange={this.handleChange} value={this.state.value} />
             </p>
             <input value="Search" type="button" onClick={this.handleButtonPress} />
