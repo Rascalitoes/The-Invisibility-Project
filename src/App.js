@@ -29,11 +29,14 @@ class App extends Component {
 
     callAPI(5)
       .then(response => {
-        console.log(response);
-        this.setState({ entries: response });
+        console.log("Loaded cards");
+        this.setState({ entries: response});
         this.setState({ isLoaded: true });
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+          console.log(err)
+          this.setState({isLoaded: false})
+        });
   }
 
   updateCards = data => {
@@ -41,11 +44,14 @@ class App extends Component {
     let search = data.searchTerms+","+data.keywords;
     callAPI(data.cardNum, search)
       .then(response => {
-        console.log(response);
+        console.log("Loaded new cards");
         this.setState({ entries: response });
         this.setState({ isLoaded: true });
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(err)
+        this.setState({isLoaded: false})
+      });
   }
 
   render() {
@@ -72,9 +78,12 @@ class App extends Component {
         <div className="container">
           {this.state.entries ?
             //if true (entries exist in state), then map through the array of entries one by one and make a new Card element for each
+            //console.log(this.state.entries)
+            
             this.state.entries.map((entry, index) => {
               return <Card key={index} quote={entry.Quote} author={entry.Author} source={entry.Text_source} />
             })
+            
             :
             //else, say:
             <p>No entries to display.</p>

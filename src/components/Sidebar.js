@@ -77,7 +77,7 @@ export default class Filter extends Component {
 
         <form className="display">
           <fieldset id="searchBox">
-            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"generalSearchPopup")}>?<span class="popuptext" id="generalSearchPopup">You can search several keywords by using commas e.g. cat, dog</span></button> Search:</legend>
+            <legend id="h1"><button className="popup" onClick={(event) => createPopup(event,"generalSearchPopup")}>?<span className="popuptext" id="generalSearchPopup">You can search several keywords by using commas e.g. cat, dog</span></button> Search:</legend>
             <p><input type="text" name='searchTerms' size="50" placeholder="Search" onChange={this.handleChange} value={this.state.value} /></p>
             <input value="Search" type="button" onClick={this.handleButtonPress} />
           </fieldset>
@@ -86,7 +86,7 @@ export default class Filter extends Component {
 
         <form className="display" autoComplete="off">
           <fieldset id="searchBox">
-            <legend id="h1"><button class="popup" onClick={(event) => createPopup(event,"keywordSearchPopup")}>?<span class="popuptext" id="keywordSearchPopup">You can search several keywords by using commas e.g. cat, dog</span></button> Keyword Search:</legend>
+            <legend id="h1"><button className="popup" onClick={(event) => createPopup(event,"keywordSearchPopup")}>?<span className="popuptext" id="keywordSearchPopup">You can search several keywords by using commas e.g. cat, dog</span></button> Keyword Search:</legend>
             <p id="keywordArea"><input type="text" list="keywordOptions" name='keywords' size="50" placeholder="Keyword" onChange={this.handleChange} value={this.state.value} />
             </p>
             <input value="Search" type="button" onClick={this.handleButtonPress} />

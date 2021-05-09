@@ -1,185 +1,172 @@
-@font-face{font-family: Corals; src: url(Fonts/Corals.otf);}
-@font-face{font-family: Cooper; src: url(Fonts/CooperHewitt-Light.otf);}
-@font-face{font-family: CooperHewittThin; src: url(Fonts/CooperHewitt-Thin.otf);}
-@font-face{font-family: PTSans; src: url(Fonts/PTSans.ttf);}
-@font-face{font-family: PTSansNarrow; src: url(Fonts/PTSansNarrow.ttf);}
-@font-face{font-family: PTSansItalic; src: url(Fonts/PTSansItalic.ttf);}
+@font-face {
+  font-family: Corals;
+  src: url(Fonts/Corals.otf);
+}
 
+@font-face {
+  font-family: Cooper;
+  src: url(Fonts/CooperHewitt-Light.otf);
+}
+
+@font-face {
+  font-family: CooperHewittThin;
+  src: url(Fonts/CooperHewitt-Thin.otf);
+}
+
+@font-face {
+  font-family: PTSans;
+  src: url(Fonts/PTSans.ttf);
+}
+
+@font-face {
+  font-family: PTSansNarrow;
+  src: url(Fonts/PTSansNarrow.ttf);
+}
+
+@font-face {
+  font-family: PTSansItalic;
+  src: url(Fonts/PTSansItalic.ttf);
+}
 
 .App {
   text-align: center;
-  display:grid;
+  display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
-#wrapperContainer{
-    width: 100%;
-    clear: all;
-    visibility: visible;
+#wrapperContainer {
+  width: 100%;
+  clear: all;
+  visibility: visible;
 }
 
-#logo{
-    margin-left: 2.5vw;
-    margin-top: 1vw;
+#logo {
+  margin-left: 2.5vw;
+  margin-top: 1vw;
 }
 
-.tile{
+.tile {
   width: 15vw;
   height: 15vw;
   float: left;
   margin: 1vw 2vw 1vw 2vw;
   border-style: solid;
-  border-width: 1px; 
-  border-color: #212121; 
-overflow-x:hidden;
+  border-width: 1px;
+  border-color: #212121;
+  overflow-x: hidden;
   text-align: left;
-  font-size: 14px; 
+  font-size: 14px;
   resize: vertical;
   background-color: white;
   position: relative;
   cursor: pointer;
-  padding:5px;
+  padding: 5px;
 }
 
-
-.newEntryForm{
-    margin:10px;
+#newEntryForm {
+  margin: 10px;
 }
 
-
-
-.meta{
+.meta {
   background-color: #02fab4;
 }
 
-.quote{ 
-    margin-top: 10px; 
-    font-family: PTSans;
+.quote {
+  margin-top: 10px;
+  font-family: PTSans;
 }
 
-.source{
-  position: relative;
-  display: inline-block;
-  vertical-align: bottom;
-  clear: all;
-  padding-top: 10px;
-  bottom: 0;
-  font-family: Corals;
-  font-size: 23px;
-    font-weight: bold; 
-    
-}
-
-#instruct{
+#instruct {
   text-align: left;
   padding-left: 8vw;
   color: darkgray;
 }
 
-.container{
-    width: 60vw; 
-    height: 40vw;
-    float: left;
-    background: white;
+.container {
+  width: 60vw;
+  height: 40vw;
+  float: left;
+  background: white;
 }
 
-#formHeader{
-    font-size:24px;
+#formHeader {
+  font-size: 24px;
 }
 
-#filters{
-    float: left;
-    width: 30vw;
-    height: 80vw;
-    margin-left: 1vw;
-    border-style: solid;
-    border-width: 1px;
-    border-color: #212121;
-    font-family: Corals;
-    margin-top: 1vw;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: stretch;
+#filters {
+  float: left;
+  width: 30vw;
+  height: 80vw;
+  margin-left: 1vw;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #212121;
+  font-family: Corals;
+  margin-top: 1vw;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
 }
 
-#filterHead{
-    font-size: 24px; 
-    margin-bottom: 5px;
-    margin-top: 5px; 
-    text-align: left;
-    font-family: corals;
-        margin-left:10px;
-}
-
-.text { 
+.text {
   color: red;
   font-size: 16px;
-    font-weight: bold; 
+  font-weight: bold;
   position: absolute;
   overflow: hidden;
   top: 20%;
   left: 50%;
-   /** margin-left: 5vw;
+  /** margin-left: 5vw;
     margin-right: 6vw;*/
-    width: 15vw;
+  width: 15vw;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-    font-family: Corals;
+  font-family: Corals;
 }
 
 .display {
-    padding-bottom: 30px;
-    height: 35%;
-    width: 85%;
-    margin-left: 10px;
-    
+  padding-bottom: 30px;
+  height: 35%;
+  width: 85%;
+  margin-left: 10px;
 }
 
 #sidebarContainer {
-    border-top: 1px solid black;
-    padding-top: 30px;
-    padding-bottom: 30px;
+  border-top: 1px solid black;
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
 #metadataFilter {
-    padding-top: 0px;
+  padding-top: 0px;
 }
 
 .invisibleDot {
-    margin-left: 100px;
-    visibility: visible;
-
+  margin-left: 100px;
+  visibility: visible;
 }
 
 #invisButton {
-    border: 0px;
-    font-size: 36px;
-    font-weight: bold; 
-
+  border: 0px;
+  font-size: 36px;
+  font-weight: bold;
 }
 
-.author {
-    visibility: visible;
-}
+/* Popup container */
 
-.sourceInfo {
-   visibility: visible
-    
-}
-
- /* Popup container */
- .popup {
+.popup {
   position: relative;
   display: inline-block;
   cursor: pointer;
-  height:2em;
-  width:2em;
+  height: 2em;
+  width: 2em;
   background-color: whitesmoke;
   border-radius: 50%;
   border: none;
 }
 
 /* The actual popup (appears on top) */
+
 .popup .popuptext {
   visibility: hidden;
   min-width: 160px;
@@ -197,6 +184,7 @@ overflow-x:hidden;
 }
 
 /* Popup arrow */
+
 .popup .popuptext::after {
   content: "";
   position: absolute;
@@ -209,6 +197,7 @@ overflow-x:hidden;
 }
 
 /* The actual popup (appears on top) */
+
 .popup .popuptextright {
   visibility: hidden;
   width: 160px;
@@ -224,6 +213,7 @@ overflow-x:hidden;
 }
 
 /* Popup arrow */
+
 .popup .popuptextright::after {
   content: "";
   position: absolute;
@@ -236,6 +226,7 @@ overflow-x:hidden;
 }
 
 /* Toggle this class when clicking on the popup container (hide and show the popup) */
+
 .popup .show {
   visibility: visible;
   -webkit-animation: fadeIn 1s;
@@ -243,12 +234,48 @@ overflow-x:hidden;
 }
 
 /* Add animation (fade in the popup) */
+
 @-webkit-keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity:1 ;}
-} 
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+
+/*Unused style
+
+.source {
+  position: relative;
+  display: inline-block;
+  vertical-align: bottom;
+  clear: all;
+  padding-top: 10px;
+  bottom: 0;
+  font-family: Corals;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+#filterHead {
+  font-size: 24px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  text-align: left;
+  font-family: corals;
+  margin-left: 10px;
+}
+
+*/

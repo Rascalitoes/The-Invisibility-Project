@@ -14,16 +14,14 @@ export default class Card extends Component {
     return (
       <div className = {'tile ' + (this.state.meta && 'meta')} onClick={()=>{this.setState({meta: !this.state.meta})}}>
         {!this.state.meta ? 
-          <p className = "quote" id="quote10"> 
+          <p className = "quote"> 
             {this.props.quote}
           </p>
         :
-          // <div className= "entry tile2" id="meta10">
-        <div>
-            <p className={'author text'}> {this.props.author}</p>
-            <p className={'sourceInfo text'}>  {this.props.source} </p>
+        <div className = 'text'>
+            <p> {this.props.author}</p>
+            <p>  {this.props.source} </p>
         </div>   
-          // </div>
         }
       </div>
     );

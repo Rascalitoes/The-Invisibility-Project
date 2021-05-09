@@ -17,10 +17,9 @@ const { type } = require('os');
  * https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
  */
 
-//Format the data for use on the webpage
-function formatForPage(results) {
-	//send the JSON data to be displayed and read by the frontend
-	//only relevant data is pushed to returnJSON and sent
+//Only include relevant data, and format it so that it can 
+//be read by the frontend. This includes setting HTTP header & status
+function formatForPage(req, res, results) {
 	let returnJSON = []
 	for (var card in results) {
 		returnJSON.push({
@@ -30,9 +29,10 @@ function formatForPage(results) {
 		})
 	}
 	return returnJSON
+
 }
 
-// Get All Quotes & Data
+// Get All Quotes & Data - TESTING PURPOSES ONLY
 exports.showAll = (req, res) => {
 	Quote.find()
 		.populate('Author Keywords')
@@ -46,60 +46,43 @@ exports.showAll = (req, res) => {
 		.catch(error => console.error(error))
 };
 
-// Return qty number of quotes
+//Returns specified number of random quotes
 exports.showRand = (req, res) => {
-	//req.url only returns ?qty=x, which the WHATWG URL API can't use on its own
-	//So I need to add in a host to create a pseudo-URL (the actual host doesn't matter)
-	/*
-	const parsedURL = new URL(req.url, 'https://localhost:2000/');
-	let quantity = Number(parsedURL.searchParams.get('qty'));
-	let terms = Number(parsedURL.searchParams.get('terms'));
-	let searchTerms = "";
-	
-	for(let i in terms){
-		if(terms[i].includes(" ")){
-			searchTerms += "\""+terms[i]+"\""+" ";
-			console.log(searchTerms);
-		}
-		else{
-			searchTerms += terms[i]+" ";
-		}
-	}
-	*/
-
 	Quote.aggregate([
 		{ $match: { "Inspected": true } },
 		{ $sample: { size: Number(req.query.qty) } }])
 		.then(results => {
+			let returnJSON = formatForPage(req, res, results);
 			//set the header and status
 			res.setHeader('content-type', 'Application/json');
 			res.statusCode = 200;
-			//format data and send back
-			res.send(formatForPage(results));
+			//send back
+			res.send(returnJSON);
 		})
 		.catch(error => console.error(error))
 }
 
+//Allows the user to search the data with keywords or phrases
 exports.searchFor = (req, res) => {
 
-	function trimAndRemove(arr){
+	//Removes any non-value elements, and trims whitespace from others
+	function trimAndRemove(arr) {
 		var returnArr = []
-		for(let i in arr){
-			if(arr[i] != ''){
+		for (let i in arr) {
+			if (arr[i] != '') {
 				returnArr.push(arr[i].trim());
 			}
 		}
 		return returnArr;
 	}
 
-	//This line does two things: splits the query terms that were delivered in 
-	//comma-separated format, and removes and unwanted blank spaces
+	//This line splits the comma-separate query terms into different
+	//elements in an array. Then, it sends it to trimAndRemove()
 	let terms = trimAndRemove(req.query.terms.split(","));
-	console.log(terms)
 
+	//The $search query REQUIRES a search index in your MongoDB cluster
+	//https://docs.atlas.mongodb.com/data-explorer/indexes/#create-an-index
 	Quote.aggregate([
-		//The $search query REQUIRES a search index in your MongoDB cluster
-		//https://docs.atlas.mongodb.com/data-explorer/indexes/#create-an-index
 		{
 			$search: {
 				"phrase": {
@@ -112,14 +95,11 @@ exports.searchFor = (req, res) => {
 		{ $sample: { size: Number(req.query.qty) } }
 	])
 		.then(results => {
-			//set the header and status
-			res.setHeader('content-type', 'Application/json');
-			res.statusCode = 200;
-			//format data and send back
-			res.send(formatForPage(results));
+			formatForPage(req, res, results);
 		})
 		.catch(error => console.error(error))
-}
+
+}//end of searchFor
 
 //Add a new quote
 exports.postQuote = (data) => {
@@ -143,13 +123,13 @@ exports.postQuote = (data) => {
 	}
 
 	//This is used for dealing with arrays of keywords
+	//Unfortunately, .forEach() does not work with async functions, so must create a for loop
 	async function initializeManyKeywords(array) {
 		let keywIDs = [];
-		//Unfortunately, .forEach() does not work with async functions, so must create a for loop
 		for (let item in array) {
 			let keyw = await Keywords.findOne({ Word: array[item] });
 			if (keyw) {
-				keywIDs.push(docResults._id);
+				keywIDs.push(keyw._id);
 			}
 			else {
 				let newKeyw = await new Keywords({ Word: array[item], Inspected: false });
@@ -160,9 +140,8 @@ exports.postQuote = (data) => {
 		return keywIDs
 	}
 
-
+	//Returns true if there are duplicates, false if there aren't any
 	async function hasDuplicates(data) {
-		//Returns true if there are duplicates, false if there aren't any
 		const result = await Quote.findOne({
 			Quote: data.quote,
 			Text_source: data.source,
@@ -178,9 +157,8 @@ exports.postQuote = (data) => {
 		}
 	}
 
+	//Returns the relevant documents' _ids.
 	async function getDocumentIDs(data) {
-		//Returns the relevant documents' _ids.
-
 		//Since the initializeModel function uses await, so does this function
 		const [quoteID, authID, userID, keyIDs] = await Promise.all([
 			//By using the call() method, the given 'this' value can be set to the mongoose models
@@ -216,8 +194,8 @@ exports.postQuote = (data) => {
 
 	//This is what is run when postQuote is called
 	hasDuplicates(data)
-		.then(result => {
-			if (!result) {
+		.then(duplicate => {
+			if (!duplicate) {
 				getDocumentIDs(data)
 					.then(addIDtoDocuments)
 			}

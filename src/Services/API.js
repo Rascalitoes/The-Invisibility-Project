@@ -6,13 +6,12 @@ export function callAPI(quantity = "5", terms = "") {
     let queries = addQueries({ "qty": quantity, "terms": terms });
     //console.log(queries);
     return fetch(`http://localhost:2000${queries}`)
-        .then(response => response.json())
+        .then(response => {
+            return response.json()
+        })
         .catch(err => {
             console.log(err)
-            return {
-                isLoaded: false,
-                entries: []
-            };
+            return [];
         });
 }
 

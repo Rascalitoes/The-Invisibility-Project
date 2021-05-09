@@ -90,7 +90,7 @@ function initialize() {
           source: req.body.source,
           date: req.body.date,
           keywords: req.body.keywords,
-          user: req.body.user
+          user: req.body.email
         };
         console.log(response);
         res.end(JSON.stringify(response));

@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
 
-function createPopup(event,id){
+function createPopup(event, name) {
   event.preventDefault();
-  var popup = document.getElementById(id);
+  var popup = document.getElementById(name);
   var len = popup.innerHTML.length;
-  if(len > 40){
+  if (len > 40) {
     popup.style.width = "40ex"
   }
-  else if (len < 20){
+  else if (len < 20) {
     popup.style.width = "160px"
   }
-  else{
-    popup.style.width = len.toString()+"ex"
+  else {
+    popup.style.width = len.toString() + "ex"
   }
   popup.classList.toggle("show");
 }
@@ -44,11 +44,11 @@ export default class Form extends Component {
 
   handleInputChange(event) {
     const target = event.target;
-    const value = target.value;
-    const name = target.name;
+    let updateState = this.state.current
+    updateState[target.name] = target.value
 
     this.setState({
-      [name]: value
+      current: updateState
     });
   }
 
@@ -63,70 +63,67 @@ export default class Form extends Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          author: this.state.author,
-          quote: this.state.quote,
-          source: this.state.source,
-          date: this.state.date,
-          keywords: this.state.keywords,
-          email: this.state.email
+          author: this.state.current.author,
+          quote: this.state.current.quote,
+          source: this.state.current.source,
+          date: this.state.current.date,
+          keywords: this.state.current.keywords,
+          email: this.state.current.email
         })
       })
-      //console.log("YAy!");
-      //this.setState({prevState: this.state.current})
     }
-    else{
+    else {
       alert("You've already submitted this!")
       event.preventDefault();
     }
   }
 
-
   render() {
 
     return (
-      <div className="newEntryForm">
+      <div id="newEntryForm">
         <p id="formHeader">Enter a new (In)Visibility:</p>
         <form onSubmit={this.handleSubmit}>
 
-          <label>Author: * <button class="popup" onClick={(event) => createPopup(event,"authorPopup")}>?<span class="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
-            <input type="text" name="author" id="author" size="50" required
+          <label>Author: * <button className="popup" onClick={(event) => createPopup(event, "authorPopup")}>?<span className="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
+            <input name="author" type="text" size="50" required
               onChange={this.handleInputChange}
-              value={this.state.author}
+              value={this.state.current.author}
             /><br />
           </label>
 
-          <label>Quote: * <button class="popup" onClick={(event) => createPopup(event,"quotePopup")}>?<span class="popuptextright" id="quotePopup">A Simple Popup!</span></button><br />
-            <textarea name="quote" id="quote" rows="5" cols="42" required
+          <label>Quote: * <button className="popup" onClick={(event) => createPopup(event, "quotePopup")}>?<span className="popuptextright" id="quotePopup">A Simple Popup!</span></button><br />
+            <textarea name="quote" rows="5" cols="42" required
               onChange={this.handleInputChange}
-              value={this.state.quote}
+              value={this.state.current.quote}
             ></textarea><br />
           </label>
 
-          <label>Source: <button class="popup" onClick={(event) => createPopup(event,"sourcePopup")}>?<span class="popuptextright" id="sourcePopup">A Simple Popup!</span></button><br />
-            <input type="text" name="source" id="source" size="50"
+          <label>Source: <button className="popup" onClick={(event) => createPopup(event, "sourcePopup")}>?<span className="popuptextright" id="sourcePopup">A Simple Popup!</span></button><br />
+            <input name="source" type="text" size="50"
               onChange={this.handleInputChange}
-              value={this.state.source}
+              value={this.state.current.source}
             /><br />
           </label>
 
-          <label>Date: <button class="popup" onClick={(event) => createPopup(event,"datePopup")}>?<span class="popuptextright" id="datePopup">A Simple Popup!</span></button><br />
-            <input type="text" name="date" id="date" size="50"
+          <label>Date: <button className="popup" onClick={(event) => createPopup(event, "datePopup")}>?<span className="popuptextright" id="datePopup">A Simple Popup!</span></button><br />
+            <input name="date" type="text" size="50"
               onChange={this.handleInputChange}
-              value={this.state.date}
+              value={this.state.current.date}
             /><br />
           </label>
 
-          <label>Keywords (comma-separate): <button class="popup" onClick={(event) => createPopup(event,"keywordsPopup")}>?<span class="popuptextright" id="keywordsPopup">A Simple Popup!</span></button><br />
-            <input type="text" name="keywords" id="keywords" size="50"
-              value={this.state.keywords}
+          <label>Keywords (comma-separate): <button className="popup" onClick={(event) => createPopup(event, "keywordsPopup")}>?<span className="popuptextright" id="keywordsPopup">A Simple Popup!</span></button><br />
+            <input name="keywords" type="text" size="50"
+              value={this.state.current.keywords}
               onChange={this.handleInputChange}
             /><br />
           </label>
 
-          <label>Email: <button class="popup" onClick={(event) => createPopup(event,"emailPopup")}>?<span class="popuptextright" id="emailPopup">A Simple Popup!</span></button><br />
-            <input type="email" name="email" id="email" size="50"
+          <label>Email: <button className="popup" onClick={(event) => createPopup(event, "emailPopup")}>?<span className="popuptextright" id="emailPopup">A Simple Popup!</span></button><br />
+            <input name="email" type="email" size="50"
               onChange={this.handleInputChange}
-              value={this.state.email}
+              value={this.state.current.email}
             /><br /><br />
           </label>
 
