@@ -11,7 +11,6 @@ export function callAPI(quantity = "5", terms = "") {
         })
         .catch(err => {
             console.log(err)
-            return [];
         });
 }
 
