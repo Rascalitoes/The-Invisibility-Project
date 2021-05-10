@@ -6,6 +6,7 @@ const QuoteSchema = mongoose.Schema({
     Author: String,
     User: String,
     Keywords: [String],
+    Date: String,
     Inspected: Boolean
 });
 

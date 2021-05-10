@@ -21,22 +21,12 @@ export default class Form extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      current: {
-        author: '',
-        quote: '',
-        source: '',
-        date: '',
-        keywords: '',
-        email: ''
-      },
-      prevState: {
-        author: '',
-        quote: '',
-        source: '',
-        date: '',
-        keywords: '',
-        email: ''
-      }
+      author: '',
+      quote: '',
+      source: '',
+      date: '',
+      keywords: '',
+      email: ''
     };
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -44,78 +34,89 @@ export default class Form extends Component {
 
   handleInputChange(event) {
     const target = event.target;
-    let updateState = this.state.current
-    updateState[target.name] = target.value
+    const name = target.name;
+    const value = target.value;
 
     this.setState({
-      current: updateState
+      [name]: value
     });
   }
 
   handleSubmit(event) {
-    if (this.state.current !== this.state.prevState) {
-      alert('Thank you for submitting a new (in)visibility');
-      event.preventDefault();
-      fetch('http://localhost:2000/process_get', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          author: this.state.current.author,
-          quote: this.state.current.quote,
-          source: this.state.current.source,
-          date: this.state.current.date,
-          keywords: this.state.current.keywords,
-          email: this.state.current.email
-        })
+    event.preventDefault();
+    fetch('http://localhost:2000/process_get', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        author: this.state.author,
+        quote: this.state.quote,
+        source: this.state.source,
+        date: this.state.date,
+        keywords: this.state.keywords,
+        email: this.state.email
       })
-    }
-    else {
-      alert("You've already submitted this!")
-      event.preventDefault();
-    }
+    })
+      .then(res => {
+        if (res.status === 409) {
+          alert("This submission already exists!")
+        }
+        else if (res.status === 201) {
+          alert("Thank you for submitting a new (in)visibility")
+        }
+      })
+  }
+
+  textArea(){
+    return (
+      <label>Author: * <button className="popup" onClick={(event) => createPopup(event, "authorPopup")}>?<span className="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
+      <input name="author" type="text" size="50" required
+        onChange={this.handleInputChange}
+        value={this.state.author}
+      /><br />
+    </label>
+    );
   }
 
   render() {
-
     return (
       <div id="newEntryForm">
         <p id="formHeader">Enter a new (In)Visibility:</p>
         <form onSubmit={this.handleSubmit}>
-
+          
           <label>Author: * <button className="popup" onClick={(event) => createPopup(event, "authorPopup")}>?<span className="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
             <input name="author" type="text" size="50" required
               onChange={this.handleInputChange}
-              value={this.state.current.author}
+              value={this.state.author}
             /><br />
           </label>
 
           <label>Quote: * <button className="popup" onClick={(event) => createPopup(event, "quotePopup")}>?<span className="popuptextright" id="quotePopup">A Simple Popup!</span></button><br />
             <textarea name="quote" rows="5" cols="42" required
               onChange={this.handleInputChange}
-              value={this.state.current.quote}
+              value={this.state.quote}
             ></textarea><br />
           </label>
 
           <label>Source: <button className="popup" onClick={(event) => createPopup(event, "sourcePopup")}>?<span className="popuptextright" id="sourcePopup">A Simple Popup!</span></button><br />
             <input name="source" type="text" size="50"
               onChange={this.handleInputChange}
-              value={this.state.current.source}
+              value={this.state.source}
             /><br />
           </label>
 
           <label>Date: <button className="popup" onClick={(event) => createPopup(event, "datePopup")}>?<span className="popuptextright" id="datePopup">A Simple Popup!</span></button><br />
             <input name="date" type="text" size="50"
               onChange={this.handleInputChange}
-              value={this.state.current.date}
+              value={this.state.date}
             /><br />
           </label>
 
           <label>Keywords (comma-separate): <button className="popup" onClick={(event) => createPopup(event, "keywordsPopup")}>?<span className="popuptextright" id="keywordsPopup">A Simple Popup!</span></button><br />
             <input name="keywords" type="text" size="50"
-              value={this.state.current.keywords}
+              value={this.state.keywords}
               onChange={this.handleInputChange}
             /><br />
           </label>
@@ -123,7 +124,7 @@ export default class Form extends Component {
           <label>Email: <button className="popup" onClick={(event) => createPopup(event, "emailPopup")}>?<span className="popuptextright" id="emailPopup">A Simple Popup!</span></button><br />
             <input name="email" type="email" size="50"
               onChange={this.handleInputChange}
-              value={this.state.current.email}
+              value={this.state.email}
             /><br /><br />
           </label>
 

@@ -102,7 +102,7 @@ exports.searchFor = (req, res) => {
 }//end of searchFor
 
 //Add a new quote
-exports.postQuote = (data) => {
+exports.postQuote = (res, data) => {
 
 	/* 
 	 * All of these are async functions (you can use await) because there's some issues with 
@@ -111,20 +111,36 @@ exports.postQuote = (data) => {
 	 */
 	async function initializeModel(fields) {
 		//Finds or (if no document exists) creates a new document, and returns its _id
-		const docResults = await this.findOne(fields);
-		if (docResults) {
-			return docResults._id;
+		let fieldValues = Object.values(fields)
+		if (fieldValues.length > 0 && fieldValues[0] != "") {
+			const docResults = await this.findOne(fields);
+			if (docResults) {
+				return docResults._id;
+			}
+			else {
+				const newDoc = await new this(fields);
+				newDoc.save();
+				return newDoc._id;
+			}
 		}
 		else {
-			const newDoc = await new this(fields);
-			newDoc.save();
-			return newDoc._id;
+			return null;
 		}
 	}
 
 	//This is used for dealing with arrays of keywords
 	//Unfortunately, .forEach() does not work with async functions, so must create a for loop
-	async function initializeManyKeywords(array) {
+	async function initializeManyKeywords(arr) {
+
+		//Remove unwanted values (e.g. blank ones), trim, and lowercase each keyword
+		var array = []
+		for (let item in arr) {
+			if (item != "") {
+				array.push(arr[item].trim().toLowerCase())
+				console.log(array);
+			}
+		}
+
 		let keywIDs = [];
 		for (let item in array) {
 			let keyw = await Keywords.findOne({ Word: array[item] });
@@ -147,6 +163,7 @@ exports.postQuote = (data) => {
 			Text_source: data.source,
 			Author: data.author,
 			User: data.user,
+			Date: data.date,
 			Keywords: data.keywords
 		})
 		if (result == null) {
@@ -169,6 +186,7 @@ exports.postQuote = (data) => {
 				Author: data.author,
 				User: data.user,
 				Keywords: data.keywords.split(", "),
+				Date: data.date,
 				Inspected: false
 			}),
 			initializeModel.call(Author, { Name: data.author }),
@@ -198,6 +216,11 @@ exports.postQuote = (data) => {
 			if (!duplicate) {
 				getDocumentIDs(data)
 					.then(addIDtoDocuments)
+					.then(res.status(201).send())
+			}
+			else {
+				res.status(409).send("Already exists")
 			}
 		})
+
 }

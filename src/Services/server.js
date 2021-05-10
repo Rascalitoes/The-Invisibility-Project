@@ -85,16 +85,18 @@ function initialize() {
       //app.post('/post', quotes.postQuote);
       app.post('/process_get', function (req, res) {
         response = {
-          author: req.body.author,
-          quote: req.body.quote,
-          source: req.body.source,
-          date: req.body.date,
-          keywords: req.body.keywords,
-          user: req.body.email
+          author: req.body.author.trim(),
+          quote: req.body.quote.trim(),
+          source: req.body.source.trim(),
+          date: req.body.date.trim(),
+          keywords: req.body.keywords.trim(),
+          user: req.body.email.trim()
         };
         console.log(response);
-        res.end(JSON.stringify(response));
-        quotes.postQuote(response);
+        //res.end(JSON.stringify(response));
+        quotes.postQuote(res, response);
+        //res.status(422).send("All good");
+        //res.end();
       });
 
       //Search functionality
