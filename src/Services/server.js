@@ -1,8 +1,5 @@
 const express = require('express');
 const app = express();
-const url = require('url');
-const https = require('https');
-const mongoClient = require('mongodb').MongoClient;
 var cors = require('cors');
 const { User } = require('./credentials.js');
 const mongoose = require('mongoose');
@@ -55,24 +52,19 @@ function initialize() {
   const db = "invis_test3"
   const uri = `mongodb+srv://${username}:${password}@cluster0.unw25.mongodb.net/${db}?retryWrites=true&w=majority`;
 
-  //const client = new mongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
   //The extra fields after the uri are to prevent deprecated drivers and functions from being used
   mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => {
       console.log("connected to db");
 
-      //Create an instance of the the MongoDB collection
-      const invisCollection = mongoose.connection.collection("quotes");
-
-      //cors() allows us to verify requests between frontent and backend
+      //Allows us to verify requests between frontent and backend
       app.use(cors());
 
-      //retrieves ALL data from the database
-      app.get('/show', quotes.showAll);
+      //Retrieves ALL data from the database
+      app.get('/showAll', quotes.showAll);
 
-      //retrieves a specified number of random documents
-      app.get('', function(req,res){
+      //Retrieves random documents within the criteria
+      app.get('/show', function(req,res){
         if(req.query.hasOwnProperty('terms')){
           quotes.searchFor(req,res)
         }
@@ -81,9 +73,8 @@ function initialize() {
         }
       });
 
-      //Work in progress
-      //app.post('/post', quotes.postQuote);
-      app.post('/process_get', function (req, res) {
+      //Allows for submissions
+      app.post('/process', function (req, res) {
         response = {
           author: req.body.author.trim(),
           quote: req.body.quote.trim(),
@@ -93,15 +84,10 @@ function initialize() {
           user: req.body.email.trim()
         };
         console.log(response);
-        //res.end(JSON.stringify(response));
         quotes.postQuote(res, response);
-        //res.status(422).send("All good");
-        //res.end();
       });
 
-      //Search functionality
-      app.get('/search', quotes.searchFor)
-
+      //Returns all inspected keywords
       app.get('/keywords',keywords.findAllInspected);
 
 

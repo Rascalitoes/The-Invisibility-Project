@@ -5,7 +5,7 @@ export function callAPI(quantity = "5", terms = "") {
     //You could write a function to randomize the this.state.entries array then store it in state for random card order, like in the original
     let queries = addQueries({ "qty": quantity, "terms": terms });
     //console.log(queries);
-    return fetch(`http://localhost:2000${queries}`)
+    return fetch(`http://localhost:2000/show${queries}`)
         .then(response => {
             return response.json()
         })

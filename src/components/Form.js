@@ -28,11 +28,11 @@ export default class Form extends Component {
       keywords: '',
       email: ''
     };
-    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleInputChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleInputChange(event) {
+  handleChange(event) {
     const target = event.target;
     const name = target.name;
     const value = target.value;
@@ -44,7 +44,7 @@ export default class Form extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
-    fetch('http://localhost:2000/process_get', {
+    fetch('http://localhost:2000/process', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -67,17 +67,10 @@ export default class Form extends Component {
           alert("Thank you for submitting a new (in)visibility")
         }
       })
-  }
-
-  textArea(){
-    return (
-      <label>Author: * <button className="popup" onClick={(event) => createPopup(event, "authorPopup")}>?<span className="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
-      <input name="author" type="text" size="50" required
-        onChange={this.handleInputChange}
-        value={this.state.author}
-      /><br />
-    </label>
-    );
+      .catch(err => {
+        console.log(err)
+        alert("Sorry, something went wrong. Please try again later")
+      });
   }
 
   render() {
@@ -85,31 +78,31 @@ export default class Form extends Component {
       <div id="newEntryForm">
         <p id="formHeader">Enter a new (In)Visibility:</p>
         <form onSubmit={this.handleSubmit}>
-          
+
           <label>Author: * <button className="popup" onClick={(event) => createPopup(event, "authorPopup")}>?<span className="popuptextright" id="authorPopup">A Simple Popup! This one is really long though, so it fills up more space</span></button><br />
             <input name="author" type="text" size="50" required
-              onChange={this.handleInputChange}
+              onChange={this.handleChange}
               value={this.state.author}
             /><br />
           </label>
 
           <label>Quote: * <button className="popup" onClick={(event) => createPopup(event, "quotePopup")}>?<span className="popuptextright" id="quotePopup">A Simple Popup!</span></button><br />
             <textarea name="quote" rows="5" cols="42" required
-              onChange={this.handleInputChange}
+              onChange={this.handleChange}
               value={this.state.quote}
             ></textarea><br />
           </label>
 
           <label>Source: <button className="popup" onClick={(event) => createPopup(event, "sourcePopup")}>?<span className="popuptextright" id="sourcePopup">A Simple Popup!</span></button><br />
             <input name="source" type="text" size="50"
-              onChange={this.handleInputChange}
+              onChange={this.handleChange}
               value={this.state.source}
             /><br />
           </label>
 
           <label>Date: <button className="popup" onClick={(event) => createPopup(event, "datePopup")}>?<span className="popuptextright" id="datePopup">A Simple Popup!</span></button><br />
             <input name="date" type="text" size="50"
-              onChange={this.handleInputChange}
+              onChange={this.handleChange}
               value={this.state.date}
             /><br />
           </label>
@@ -117,13 +110,13 @@ export default class Form extends Component {
           <label>Keywords (comma-separate): <button className="popup" onClick={(event) => createPopup(event, "keywordsPopup")}>?<span className="popuptextright" id="keywordsPopup">A Simple Popup!</span></button><br />
             <input name="keywords" type="text" size="50"
               value={this.state.keywords}
-              onChange={this.handleInputChange}
+              onChange={this.handleChange}
             /><br />
           </label>
 
           <label>Email: <button className="popup" onClick={(event) => createPopup(event, "emailPopup")}>?<span className="popuptextright" id="emailPopup">A Simple Popup!</span></button><br />
             <input name="email" type="email" size="50"
-              onChange={this.handleInputChange}
+              onChange={this.handleChange}
               value={this.state.email}
             /><br /><br />
           </label>

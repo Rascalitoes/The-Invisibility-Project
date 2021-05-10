@@ -2,9 +2,6 @@ const Quote = require('../models/quote.model.js');
 const Author = require('../models/author.model.js');
 const Keywords = require('../models/keyword.model.js');
 const User = require('../models/user.model.js');
-const URL = require('url').URL;
-const { db } = require('../models/quote.model.js');
-const { type } = require('os');
 
 /*
  * Some important things to know for the following functions:
@@ -28,20 +25,23 @@ function formatForPage(req, res, results) {
 			Text_source: results[card]["Text_source"]
 		})
 	}
-	return returnJSON
-
+	//set the header and status
+	res.setHeader('content-type', 'Application/json');
+	res.status(200);
+	//send back
+	res.send(returnJSON);
 }
 
 // Get All Quotes & Data - TESTING PURPOSES ONLY
 exports.showAll = (req, res) => {
-	Quote.find()
-		.populate('Author Keywords')
+	Quote.find({ "Inspected": true })
+		//.explain("executionStates")
 		.then(results => {
 			//set the header and status
 			res.setHeader('content-type', 'Application/json');
-			res.statusCode = 200;
-			//send the JSON data to be displayed and read by the frontend
-			res.send(JSON.stringify(results));
+			res.status(200);
+			//send back
+			res.send(results);
 		})
 		.catch(error => console.error(error))
 };
@@ -52,12 +52,7 @@ exports.showRand = (req, res) => {
 		{ $match: { "Inspected": true } },
 		{ $sample: { size: Number(req.query.qty) } }])
 		.then(results => {
-			let returnJSON = formatForPage(req, res, results);
-			//set the header and status
-			res.setHeader('content-type', 'Application/json');
-			res.statusCode = 200;
-			//send back
-			res.send(returnJSON);
+			formatForPage(req, res, results)
 		})
 		.catch(error => console.error(error))
 }
@@ -137,7 +132,6 @@ exports.postQuote = (res, data) => {
 		for (let item in arr) {
 			if (item != "") {
 				array.push(arr[item].trim().toLowerCase())
-				console.log(array);
 			}
 		}
 
@@ -197,9 +191,6 @@ exports.postQuote = (res, data) => {
 		//return an object literal of all the IDs
 		return { quoteID, authID, userID, keyIDs };
 	}
-
-
-
 
 	async function addIDtoDocuments(ID) {
 		//Since the quote doesn't change, all the data was set in getDocumentIDs
