@@ -26,9 +26,5 @@ exports.findAllInspected = (req, res) => {
 
             res.send(JSON.stringify(wordArray))
         })
-        .catch(err => {
-            res.status(500).send({
-                message: err.message
-            });
-        });
+        .catch(error => console.error(error));
 }

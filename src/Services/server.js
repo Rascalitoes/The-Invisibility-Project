@@ -1,12 +1,10 @@
 const express = require('express');
 const app = express();
-var cors = require('cors');
+const cors = require('cors');
 const { User } = require('./credentials.js');
 const mongoose = require('mongoose');
-let quotes = require('./controllers/quote.controller.js');
-let keywords = require('./controllers/keyword.controller.js');
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const quotes = require('./controllers/quote.controller.js');
+const keywords = require('./controllers/keyword.controller.js');
 
 /*
  * The way this whole thing works, is a little complicated, I used tutorials from the following:
@@ -57,19 +55,23 @@ function initialize() {
     .then(() => {
       console.log("connected to db");
 
+      app.use(express.urlencoded({ extended: true }));
+      app.use(express.json());
+      
       //Allows us to verify requests between frontent and backend
       app.use(cors());
+
 
       //Retrieves ALL data from the database
       app.get('/showAll', quotes.showAll);
 
       //Retrieves random documents within the criteria
-      app.get('/show', function(req,res){
-        if(req.query.hasOwnProperty('terms')){
-          quotes.searchFor(req,res)
+      app.get('/show', function (req, res) {
+        if (req.query.hasOwnProperty('terms')) {
+          quotes.searchFor(req, res)
         }
-        else{
-          quotes.showRand(req,res);
+        else {
+          quotes.showRand(req, res);
         }
       });
 
@@ -88,7 +90,7 @@ function initialize() {
       });
 
       //Returns all inspected keywords
-      app.get('/keywords',keywords.findAllInspected);
+      app.get('/keywords', keywords.findAllInspected);
 
 
     }).catch(err => {

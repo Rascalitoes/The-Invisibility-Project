@@ -33,7 +33,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function createPopup(event,id){
   event.preventDefault();
-  var popup = document.getElementById(id);
+  let popup = document.getElementById(id);
   popup.classList.toggle("show");
 }
 

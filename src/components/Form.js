@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 
 function createPopup(event, name) {
   event.preventDefault();
-  var popup = document.getElementById(name);
-  var len = popup.innerHTML.length;
+  let popup = document.getElementById(name);
+  let len = popup.innerHTML.length;
   if (len > 40) {
     popup.style.width = "40ex"
   }

@@ -18,7 +18,7 @@ const User = require('../models/user.model.js');
 //be read by the frontend. This includes setting HTTP header & status
 function formatForPage(req, res, results) {
 	let returnJSON = []
-	for (var card in results) {
+	for (let card in results) {
 		returnJSON.push({
 			Quote: results[card]["Quote"],
 			Author: results[card]["Author"],

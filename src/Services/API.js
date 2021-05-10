@@ -21,7 +21,7 @@ function addQueries(query = {}) {
     let returnString = "";
     //check for elements in dictionary, if there are any, prep for queries by adding '?'
     returnString += "?";
-    for (var q in query) {
+    for (let q in query) {
         if (query[q]) {
             returnString += (q + "=" + query[q] + "&");
         }
