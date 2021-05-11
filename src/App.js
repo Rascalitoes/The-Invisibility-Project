@@ -17,6 +17,21 @@ class App extends Component {
     }
   }
 
+  setAPIData(query = { qty: 5 }, pathname = "show") {
+    callAPI(query, pathname)
+      .then(response => {
+        if (response.length <= 0) {
+          throw new RangeError("No data received")
+        }
+        this.setState({ entries: response });
+        this.setState({ isLoaded: true });
+      })
+      .catch(err => {
+        console.log(err)
+        this.setState({ isLoaded: false })
+      });
+  }
+
   componentDidMount() {
     /*
      * Call the API
@@ -27,34 +42,18 @@ class App extends Component {
      * added the CORS library. To learn more about how this all works, please see src/Services/server.js
      */
 
-    callAPI(5)
-      .then(response => {
-        console.log(response)
-        if(response.length <= 0){
-          throw new RangeError("No data received")
-        }
-        this.setState({ entries: response});
-        this.setState({ isLoaded: true });
-      })
-      .catch(err => {
-          console.log(err)
-          this.setState({isLoaded: false})
-        });
-  }
+    if (window.location.pathname === "/user") {
+      this.setAPIData(window.location.search,"user")
+    }
+    else {
+      this.setAPIData()
+    }
+
+  }//end of componentDidMount
 
   updateCards = data => {
-    //let search = data.searchTerms.split(",").concat(data.keywords.split(","));
-    let search = data.searchTerms+","+data.keywords;
-    callAPI(data.cardNum, search)
-      .then(response => {
-        console.log("Loaded new cards");
-        this.setState({ entries: response });
-        this.setState({ isLoaded: true });
-      })
-      .catch(err => {
-        console.log(err)
-        this.setState({isLoaded: false})
-      });
+    let search = data.searchTerms + "," + data.keywords;
+    this.setAPIData({ qty: data.cardNum, terms: search })
   }
 
   render() {
@@ -82,11 +81,11 @@ class App extends Component {
           {this.state.isLoaded ?
             //if true (entries exist in state), then map through the array of entries one by one and make a new Card element for each
             //console.log(this.state.entries)
-            
+
             this.state.entries.map((entry, index) => {
               return <Card key={index} quote={entry.Quote} author={entry.Author} source={entry.Text_source} />
             })
-            
+
             :
             //else, say:
             <p>No entries to display.</p>

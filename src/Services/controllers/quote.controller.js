@@ -201,6 +201,7 @@ exports.postQuote = (res, data) => {
 		ID.keyIDs.forEach(async keyword => {
 			await Keywords.findOneAndUpdate({ _id: keyword }, { $push: { Quotes: ID.quoteID } })
 		});
+		return ID.quoteID;
 	}
 
 	//This is what is run when postQuote is called
@@ -209,7 +210,7 @@ exports.postQuote = (res, data) => {
 			if (!duplicate) {
 				getDocumentIDs(data)
 					.then(addIDtoDocuments)
-					.then(email.data.sendAllMail(data))
+					.then(ID => email.data.sendAllMail(data,ID))
 					.then(res.status(201).send())
 			}
 			else {

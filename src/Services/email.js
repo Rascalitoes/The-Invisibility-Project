@@ -36,13 +36,11 @@ methods.sendAdminMail = async function (data) {
     <b>Date:</b> ${data.date}<br>
     <b>Keywords:</b> ${data.keywords}<br>
     <b>Email:</b> ${data.user}</p>`, // html body
-  });
-
-  console.log("Admin message sent: %s", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+  })
+  .catch(error => console.error(error));
 }
 
-methods.sendUserMail = async function (data) {
+methods.sendUserMail = async function (data,ID) {
 
   // send mail with defined transport object
   let info = await transporter.sendMail({
@@ -76,16 +74,17 @@ methods.sendUserMail = async function (data) {
     <b>Source:</b> ${data.source}<br>
     <b>Date:</b> ${data.date}<br>
     <b>Keywords:</b> ${data.keywords}<br>
-    <b>Email:</b> ${data.user}</p>`, // html body
-  });
-
-  console.log("User message sent: %s", info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
+    <b>Email:</b> ${data.user}</p>
+    
+    
+    You can view all your submissions at http://localhost:3000/user?id=${ID}`, // html body
+  })
+  .catch(error => console.error(error));
 }
 
-methods.sendAllMail = function(data){
+methods.sendAllMail = function(data,ID){
   methods.sendAdminMail(data);
-  methods.sendUserMail(data);
+  methods.sendUserMail(data,ID);
 }
 
 exports.data = methods

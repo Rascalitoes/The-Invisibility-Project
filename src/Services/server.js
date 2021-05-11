@@ -5,6 +5,7 @@ const { User } = require('./credentials.js');
 const mongoose = require('mongoose');
 const quotes = require('./controllers/quote.controller.js');
 const keywords = require('./controllers/keyword.controller.js');
+const users = require('./controllers/user.controller.js');
 
 /*
  * The way this whole thing works, is a little complicated, I used tutorials from the following:
@@ -91,6 +92,8 @@ function initialize() {
 
       //Returns all inspected keywords
       app.get('/keywords', keywords.findAllInspected);
+
+      app.get('/user',users.findAll)
 
 
     }).catch(err => {
