@@ -2,6 +2,8 @@ const Quote = require('../models/quote.model.js');
 const Author = require('../models/author.model.js');
 const Keywords = require('../models/keyword.model.js');
 const User = require('../models/user.model.js');
+const email = require('../email.js');
+//import { sendMail } from '../email.js';
 
 /*
  * Some important things to know for the following functions:
@@ -207,6 +209,7 @@ exports.postQuote = (res, data) => {
 			if (!duplicate) {
 				getDocumentIDs(data)
 					.then(addIDtoDocuments)
+					.then(email.data.sendAllMail(data))
 					.then(res.status(201).send())
 			}
 			else {

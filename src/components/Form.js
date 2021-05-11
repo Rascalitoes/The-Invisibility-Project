@@ -32,14 +32,12 @@ export default class Form extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
+  handleChange = event => {
     const target = event.target;
-    const name = target.name;
     const value = target.value;
+    const name = target.name;
 
-    this.setState({
-      [name]: value
-    });
+    this.setState({ [name]: value });
   }
 
   handleSubmit(event) {
