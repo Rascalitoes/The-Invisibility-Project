@@ -84,7 +84,7 @@ exports.searchFor = (req, res) => {
 			$search: {
 				"phrase": {
 					"query": terms,
-					"path": "Quote"
+					"path": ["Quote","Keywords","Text_source","Author"]
 				}
 			}
 		},
@@ -212,10 +212,12 @@ exports.postQuote = (res, data) => {
 					.then(addIDtoDocuments)
 					.then(ID => email.data.sendAllMail(data,ID))
 					.then(res.status(201).send())
+					.catch(error => console.error(error))
 			}
 			else {
 				res.status(409).send("Already exists")
 			}
 		})
+		.catch(error => console.error(error));
 
 }

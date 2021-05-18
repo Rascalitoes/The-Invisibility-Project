@@ -1,17 +1,13 @@
 //callAPI only fetches (GET) data, it can't POST or PUT
 export function callAPI(query = { qty: 5 }, pathname = "show") {
     //replace localhost:2000 url with the URL where your database will live (e.g. http://robertglick.com/database/show)
-    //Alternatively, you can go to package.json, and set "proxy":"http://robertglick.com", and fetch("/show")
-    //You could write a function to randomize the this.state.entries array then store it in state for random card order, like in the original
+    //Alternatively, you can go to package.json, and set "proxy":"http://robertglick.com"
     let queries = addQueries(query);
-    //console.log(queries);
     return fetch(`http://localhost:2000/${pathname}${queries}`)
         .then(response => {
             return response.json()
         })
-        .catch(err => {
-            console.log(err)
-        });
+        .catch(err => {console.log(err)});
 }
 
 

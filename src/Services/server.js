@@ -68,8 +68,12 @@ function initialize() {
 
       //Retrieves random documents within the criteria
       app.get('/show', function (req, res) {
+        //Finds if the query includes terms. 
+        //If it does, ensures that they contain actual letters (not numbers or blank spaces)
         if (req.query.hasOwnProperty('terms')) {
-          quotes.searchFor(req, res)
+          if(/[a-zA-Z]/.test(req.query.terms)){
+            quotes.searchFor(req, res)
+          }
         }
         else {
           quotes.showRand(req, res);

@@ -6,9 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function returnOptions() {
     return fetch("http://localhost:2000/keywords")
       .then(response => response.json())
-      .catch(err => {
-        console.log(err)
-      });
+      .catch(error => console.error(error));
   }
 
   function createDLOption(word) {
@@ -27,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
       DL.appendChild(createDLOption(optionValues[word]));
     }
   })
+  .catch(error => console.error(error));
 
   document.getElementById("keywordArea").appendChild(DL);
 })
@@ -51,6 +50,7 @@ export default class Filter extends Component {
   }
 
   handleChange = event => {
+    //The name property of the input on the form must match the state it is trying to change
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -85,7 +85,8 @@ export default class Filter extends Component {
           </fieldset>
 
         </form>
-
+        {/* 
+        This works, and the backend can deal with it
         <form className="display">
           <fieldset>
             <p>Current tiles:</p>
@@ -95,7 +96,7 @@ export default class Filter extends Component {
           </fieldset>
 
         </form>
-
+        */}
       </div>
     );
   }

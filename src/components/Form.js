@@ -33,6 +33,7 @@ export default class Form extends Component {
   }
 
   handleChange = event => {
+    //The name property of the input on the form must match the state it is trying to change
     const target = event.target;
     const value = target.value;
     const name = target.name;
@@ -42,6 +43,7 @@ export default class Form extends Component {
 
   handleSubmit(event) {
     event.preventDefault();
+    document.getElementById("formSubmit").disabled=true;
     fetch('http://localhost:2000/process', {
       method: 'POST',
       headers: {
@@ -58,16 +60,21 @@ export default class Form extends Component {
       })
     })
       .then(res => {
+        document.getElementById("formSubmit").disabled=false;
         if (res.status === 409) {
           alert("This submission already exists!")
         }
         else if (res.status === 201) {
           alert("Thank you for submitting a new (in)visibility")
         }
+        else{
+          alert(res.statusText)
+        }
       })
       .catch(err => {
         console.log(err)
         alert("Sorry, something went wrong. Please try again later")
+        document.getElementById("formSubmit").disabled=false;
       });
   }
 
@@ -119,7 +126,7 @@ export default class Form extends Component {
             /><br /><br />
           </label>
 
-          <input type="submit" value="Submit" />
+          <input type="submit" value="Submit" id="formSubmit"/>
         </form>
       </div>
     );

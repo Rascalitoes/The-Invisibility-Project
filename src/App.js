@@ -17,6 +17,7 @@ class App extends Component {
     }
   }
 
+  //Setting the qty here sets the default number of cards to be displayed
   setAPIData(query = { qty: 5 }, pathname = "show") {
     callAPI(query, pathname)
       .then(response => {
@@ -52,6 +53,7 @@ class App extends Component {
   }//end of componentDidMount
 
   updateCards = data => {
+    //
     let search = data.searchTerms + "," + data.keywords;
     this.setAPIData({ qty: data.cardNum, terms: search })
   }
