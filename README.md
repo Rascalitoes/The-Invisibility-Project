@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# The Invisibility Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a MERN project (MongoDB, Express.js, ReactJS, Node.js) \
+The various installation instructions can be seen here:
 
-## Available Scripts
+## Versions used
+Mongo   --  4.4.6 \
+Express --  4.17.1 \
+React   --  17.0.1 \
+Node    --  14.15.1
 
-In the project directory, you can run:
+## Setting up the project to run on your local machine
+* At `src/Services/API.js`, the `fetch` at line 6 should fetch from http://localhost:2000 \
+  `return fetch(http://localhost:2000/${pathname}${queries})`
+  
+* Set up your database. At `src/Services/credentials.js`, change the `db` variable to the name of the database you wish to access.
+* #### If using Mongo Atlas:
+  * At `src/Services/credentials.js`, change the `User` variable to your Mongo Atlas Project username and password
+  * If you plan on saving this file, make sure you don't save it in a place where other people can access this file and your passwords
+* #### If using Mongo Community (or other local instance):
+  * At `src/Services/server.js`, set your uri variable on line 52 to your local Mongo port (mongodb://127.0.0.1:27017) by default
+    * `const uri = "mongodb://127.0.0.1:27017"`
+* To **add email functionality**, navigate to `src/Services/credentials.js` and edit the `mailInfo` variable. 
+* If you **do not wish to recieve emails** while running the project, navigate to `src/services/controllers/quote.controller.js` and comment out the line `.then(ID => email.data.sendAllMail(data,ID))`
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Running the project on your local machine
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+* ### *Backend*
+  In the project directory, navigate to `src/Services` \
+  Run the server with `node server.js` \
+  By default, the server can be accessed at [http://localhost:2000](http://localhost:2000) (It'll just be a blank page) \
+  If your server runs on a different port, change the port variable (line 38) at `src/Services/server.js` to your port
+    * `const port = xxxx`
+    
+  Once you see the following two messages: \
+  `listening on xxxx` \
+  `connected to db` \
+  You can continue to the next step
 
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+* ### *Frontend*
+  In a separate terminal, navigate to the project directory and run the React frontend with `npm start` (this may take a while)\
+  Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
