@@ -4,7 +4,7 @@ import Form from './components/Form';
 import Filter from './components/Sidebar';
 import './App.css';
 import invisibilitylogo from "./InvisibilityLogo.png";
-import { callAPI } from "./Services/API.js";
+import { callAPI } from "./API.js";
 
 
 class App extends Component {
